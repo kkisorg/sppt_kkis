@@ -2,37 +2,30 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class PasswordReset extends Model
 {
-    use Notifiable;
-
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'user';
+    protected $table = 'password_reset';
 
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
-    protected $guarded = [
-        'is_active', 'is_admin'
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    protected $hidden = [];
 
     /**
      * Indicates if the model should be timestamped.
@@ -53,18 +46,10 @@ class User extends Authenticatable
     const UPDATED_AT = 'update_timestamp';
 
     /**
-     * Get the activation token record that belongs to the user.
+     * Get the user associated with the password reset token.
      */
-    public function account_activation()
+    public function user()
     {
-        return $this->hasOne('App\AccountActivation');
-    }
-
-    /**
-     * Get the password record that belongs to the user.
-     */
-    public function password_reset()
-    {
-        return $this->hasMany('App\PasswordReset', 'email', 'email');
+        return $this->belongsTo('App\User', 'email', 'email');
     }
 }
