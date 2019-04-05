@@ -18,10 +18,10 @@ use App\Mail\ResetPassword;
 class UserController extends Controller
 {
     /**
-    * Instantiate a new controller instance.
-    *
-    * @return void
-    */
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
 
@@ -48,8 +48,8 @@ class UserController extends Controller
      * @param Request $request
      * @return Response`
      */
-     public function authenticate(Request $request)
-     {
+    public function authenticate(Request $request)
+    {
         $email = strtolower($request->input('email'));
         $password = $request->input('password');
         $remember = $request->input('remember');
@@ -143,7 +143,7 @@ class UserController extends Controller
      * @param string $token
      * @return Response
      */
-     public function activate(Request $request, string $token)
+    public function activate(Request $request, string $token)
     {
         $account_activation = AccountActivation::where('token', $token)->first();
         if (!$account_activation) {
@@ -162,12 +162,12 @@ class UserController extends Controller
             ->with('success_message', 'Akun Anda sudah berhasil diaktivasi. Silakan login.');
      }
 
-     /**
-      * Display the edit profile form
-      *
-      * @param Request $request
-      * @return Response
-      */
+    /**
+     * Display the edit profile form
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function edit_profile(Request $request)
     {
         if (!Auth::check()) {
@@ -179,7 +179,7 @@ class UserController extends Controller
         return view('user.profile.edit', ['user' => $user]);
     }
 
-     /**
+    /**
      * Update the user password into the database
      *
      * @param Request $request
@@ -272,13 +272,13 @@ class UserController extends Controller
     }
 
     /**
-    * Add password reset record into the database
-    *
-    * @param Request $request
-    * @return Response
-    */
-   public function insert_password_reset(Request $request)
-   {
+     * Add password reset record into the database
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function insert_password_reset(Request $request)
+    {
         $email = $request->input('email');
         $email = strtolower($email);
         // Generate token
@@ -303,16 +303,16 @@ class UserController extends Controller
                    'Silakan cek email Anda untuk proses lebih lanjut.');
    }
 
-   /**
-    * Display the reset password form
-    *
-    * @param Request $request
-    * @return Response
-    */
-   public function reset_password(Request $request, $token)
-   {
-       $now = Carbon::now();
-       $password_reset = PasswordReset::where('token', $token)->first();
+    /**
+     * Display the reset password form
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function reset_password(Request $request, $token)
+    {
+        $now = Carbon::now();
+        $password_reset = PasswordReset::where('token', $token)->first();
         if (!$password_reset) {
             return redirect('/login', 303)
                 ->with('error_message', 'Tautan yang Anda masukkan tidak valid.');
@@ -329,35 +329,35 @@ class UserController extends Controller
         ]);
         $user = $password_reset->user;
         return view('user.password.reset.form', ['user' => $user]);
-   }
+    }
 
-   /**
-    * Update the user password into the database
-    *
-    * @param Request $request
-    * @return Response
-    */
-   public function update_forgotten_password(Request $request)
-   {
-       $email = $request->input('email');
-       $email = strtolower($email);
-       $password = $request->input('password');
-       // Encrypt the password
-       $password_hashed = Hash::make($password);
+    /**
+     * Update the user password into the database
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function update_forgotten_password(Request $request)
+    {
+        $email = $request->input('email');
+        $email = strtolower($email);
+        $password = $request->input('password');
+        // Encrypt the password
+        $password_hashed = Hash::make($password);
 
-       $user = User::where('email', $email)->first();
-       $user->update([
-           'password' => $password_hashed
-       ]);
+        $user = User::where('email', $email)->first();
+        $user->update([
+            'password' => $password_hashed
+        ]);
 
-       // Send email to user for acknowledgement
-       Mail::to($user)
-           ->bcc(config('mail.from.address'))
-           ->send(new PasswordChanged($user));
+        // Send email to user for acknowledgement
+        Mail::to($user)
+            ->bcc(config('mail.from.address'))
+            ->send(new PasswordChanged($user));
 
-       // Logout
-       Auth::logout();
-       return redirect('/login', 303)
-           ->with('success_message', 'Password Anda telah berhasil diganti. Silakan login ulang.');
-   }
+        // Logout
+        Auth::logout();
+        return redirect('/login', 303)
+            ->with('success_message', 'Password Anda telah berhasil diganti. Silakan login ulang.');
+    }
 }
