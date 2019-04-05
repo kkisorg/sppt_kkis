@@ -20,9 +20,10 @@ class PublicController extends Controller
     /**
     * Display the main menu
     *
+    * @param Request $request
     * @return Response
     */
-    public function main_menu()
+    public function main_menu(Request $request)
     {
         $user = Auth::user();
         return view('public.menu', ['user' => $user]);
