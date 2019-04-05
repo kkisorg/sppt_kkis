@@ -32,3 +32,11 @@ Route::get('/forget_password', 'UserController@forget_password');
 Route::post('/insert_password_reset', 'UserController@insert_password_reset');
 Route::get('/reset_password/{token}', 'UserController@reset_password');
 Route::post('/update_forgotten_password', 'UserController@update_forgotten_password');
+
+// Media Controller
+Route::get('/media', 'MediaController@index');
+Route::get('/media/create', 'MediaController@create');
+Route::post('/media/insert', 'MediaController@insert');
+Route::get('/media/edit/{media_id}', 'MediaController@edit');
+Route::post('/media/update', 'MediaController@update');
+Route::get('/media/delete/{media_id}', 'MediaController@delete');
