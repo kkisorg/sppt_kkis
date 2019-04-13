@@ -69,4 +69,12 @@ class AnnouncementRequest extends Model
         return $this->belongsToMany('App\Media', 'announcement_request_media');
     }
 
+    /**
+     * Get the revision history associated with the announcement request.
+     */
+    public function history()
+    {
+        return $this->hasMany('App\AnnouncementRequestHistory');
+    }
+
 }

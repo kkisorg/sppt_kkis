@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\AnnouncementRequest;
+use App\AnnouncementRequestHistory;
 use App\Media;
 
 class AnnouncementRequestController extends Controller
@@ -83,6 +84,18 @@ class AnnouncementRequestController extends Controller
         ]);
         $announcement_request->media()->attach($media);
 
+        $announcement_request_history = AnnouncementRequestHistory::create([
+            'announcement_request_id' => $announcement_request->id,
+            'revision_no' => 0,
+            'organization_name' => $organization_name,
+            'title' => $title,
+            'content' => $content,
+            'duration' => $duration,
+            'event_timestamp' => $event_timestamp,
+            'creator_id' => Auth::id()
+        ]);
+        $announcement_request_history->media()->attach($media);
+
         return redirect('/announcement_request', 303)
             ->with('success_message', 'Pengumuman Anda telah berhasil dibuat.');
     }
@@ -153,6 +166,18 @@ class AnnouncementRequestController extends Controller
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
         $announcement_request->media()->sync($media);
 
+        $announcement_request_history = AnnouncementRequestHistory::create([
+            'announcement_request_id' => $announcement_request->id,
+            'revision_no' => $latest_revision_no + 1,
+            'organization_name' => $organization_name,
+            'title' => $title,
+            'content' => $content,
+            'duration' => $duration,
+            'event_timestamp' => $event_timestamp,
+            'creator_id' => Auth::id()
+        ]);
+        $announcement_request_history->media()->attach($media);
+
         return redirect('/announcement_request/', 303)
             ->with('success_message', 'Pengumuman Anda telah berhasil diubah.');
     }
@@ -172,7 +197,24 @@ class AnnouncementRequestController extends Controller
             Carbon::createFromTimestamp($announcement_request->event_timestamp)->format('l, j F Y, g:i a');
         $announcement_request->media = implode(', ', $announcement_request->media()->pluck('name')->toArray());
 
-        return view('announcementrequest.view', ['announcement_request' => $announcement_request]);
+        // Get the revision list
+        $revisions = $announcement_request->history()
+            ->where('revision_no', '!=', $announcement_request->revision_no)
+            ->orderBy('revision_no', 'desc')
+            ->get();
+
+        foreach($revisions as $revision) {
+            $revision->event_datetime =
+                Carbon::createFromTimestamp($revision->event_timestamp)->format('l, j F Y, g:i a');
+            $revision->create_datetime = $revision->create_timestamp->format('l, j F Y, g:i a');
+            $revision->media = implode(', ', $revision->media()->pluck('name')->toArray());
+
+        }
+
+        return view(
+            'announcementrequest.view',
+            ['announcement_request' => $announcement_request, 'revisions' => $revisions]
+        );
     }
 
     /**
