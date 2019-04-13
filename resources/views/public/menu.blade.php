@@ -59,5 +59,23 @@
                 </div>
             </div>
         </div>
+        @if($user->is_admin)
+        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3><b>Menu Admin</b></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/media">
+                                Buat/Ubah/Hapus Media
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 @endsection
