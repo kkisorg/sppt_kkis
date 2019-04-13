@@ -67,4 +67,20 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\PasswordReset', 'email', 'email');
     }
+
+    /**
+     * Get the announcement request record that belongs to the user.
+     */
+    public function announcement_request()
+    {
+        return $this->hasMany('App\AnnouncementRequest', 'creator_id');
+    }
+
+    /**
+     * Get the announcement request record that was edited by the user.
+     */
+    public function announcement_request_edit()
+    {
+        return $this->hasMany('App\AnnouncementRequest', 'editor_id');
+    }
 }

@@ -40,3 +40,15 @@ Route::post('/media/insert', 'MediaController@insert');
 Route::get('/media/edit/{media_id}', 'MediaController@edit');
 Route::post('/media/update', 'MediaController@update');
 Route::get('/media/delete/{media_id}', 'MediaController@delete');
+
+// API Controller
+Route::post('/api/image_upload', 'APIController@image_upload');
+
+// Announcement Request Controller
+Route::get('/announcement_request', 'AnnouncementRequestController@index');
+Route::get('/announcement_request/create', 'AnnouncementRequestController@create');
+Route::post('/announcement_request/insert', 'AnnouncementRequestController@insert');
+Route::get('/announcement_request/edit/{announcement_request_id}', 'AnnouncementRequestController@edit');
+Route::post('/announcement_request/update', 'AnnouncementRequestController@update');
+Route::get('/announcement_request/view/{announcement_request_id}', 'AnnouncementRequestController@view');
+Route::get('/announcement_request/delete/{announcement_request_id}', 'AnnouncementRequestController@delete');
