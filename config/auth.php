@@ -92,9 +92,9 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
+        'user' => [
+            'provider' => 'user',
+            'table' => 'password_reset',
             'expire' => 60,
         ],
     ],
