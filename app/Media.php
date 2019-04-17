@@ -61,4 +61,20 @@ class Media extends Model
         return $this->belongsToMany('App\AnnouncementRequestHistory', 'announcement_request_history_media');
     }
 
+    /**
+     * Get the online media record that belongs to the media.
+     */
+    public function online_media()
+    {
+        return $this->hasOne('App\OnlineMedia');
+    }
+
+    /**
+     * Get the offline media record that belongs to the media.
+     */
+    public function offline_media()
+    {
+        return $this->hasOne('App\OfflineMedia');
+    }
+
 }
