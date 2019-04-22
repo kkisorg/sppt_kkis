@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AnnouncementRequest extends Model
+class Announcement extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'announcement_request';
+    protected $table = 'announcement';
 
     /**
      * The attributes that aren't mass assignable.
@@ -46,7 +46,7 @@ class AnnouncementRequest extends Model
     const UPDATED_AT = 'update_timestamp';
 
     /**
-     * Get the user who created the announcement request.
+     * Get the user who created the announcement.
      */
     public function creator()
     {
@@ -54,7 +54,7 @@ class AnnouncementRequest extends Model
     }
 
     /**
-     * Get the user who edited the announcement request.
+     * Get the user who edited the announcement.
      */
     public function editor()
     {
@@ -62,27 +62,20 @@ class AnnouncementRequest extends Model
     }
 
     /**
-     * Get the media associated with the announcement request.
+     * Get the announcement request associated with the announcement.
+     */
+    public function announcement_request()
+    {
+        return $this->belongsTo('App\AnnouncementRequest');
+    }
+
+
+
+    /**
+     * Get the media associated with the announcement.
      */
     public function media()
     {
-        return $this->belongsToMany('App\Media', 'announcement_request_media');
+        return $this->belongsToMany('App\Media', 'announcement_media')->withPivot('content');
     }
-
-    /**
-     * Get the revision history associated with the announcement request.
-     */
-    public function history()
-    {
-        return $this->hasMany('App\AnnouncementRequestHistory');
-    }
-
-    /**
-     * Get the announcement associated with the announcement request.
-     */
-    public function announcement()
-    {
-        return $this->hasOne('App\Announcement');
-    }
-
 }

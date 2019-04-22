@@ -77,4 +77,12 @@ class Media extends Model
         return $this->hasOne('App\OfflineMedia');
     }
 
+    /**
+     * Get the announcement associated with the media.
+     */
+    public function announcement()
+    {
+        return $this->belongsToMany('App\Announcement', 'announcement_media')->withPivot('content');
+    }
+
 }
