@@ -40,7 +40,7 @@
                     {{ csrf_field() }}
                     <div class="panel-body">
                         <div class="row form-group center-block" >
-                            <label for="title"> Unit Kegiatan: </label>
+                            <label for="organization-name"> Unit Kegiatan: </label>
                             <input type="text" name="organization-name" id="organization-name" class="form-control" value="{{ $default_organization_name }}" required>
                         </div>
                         <div class="row form-group center-block" >
@@ -48,7 +48,7 @@
                             <input type="text" name="title" id="title" class="form-control" required>
                         </div>
                         <div class="row form-group center-block">
-                            <label for="title"> Isi Pengumuman: </label>
+                            <label> Isi Pengumuman: </label>
                             <ul>
                                 <li><b>Isi Pengumuman beserta flyer dimasukkan di kolom dibawah ini.</b></li>
                                 <li>
@@ -64,7 +64,7 @@
                         </div>
                         <hr>
                         <div class="row form-group center-block">
-                            <label for="title"> Waktu Kegiatan: </label>
+                            <label> Waktu Kegiatan: </label>
                             <ul>
                                 <li><b>Isi dengan tanggal/waktu kegiatan.</b> Tetapi, apabila acara memiliki batas waktu (deadline) pendaftaran, isi dengan tanggal/waktu (deadline) batas pendaftaran.</li>
                                 <li><b>Apabila pengumuman berisi iklan (contoh: mencari anggota baru), isi dengan salah satu tanggal dalam 3 bulan ke depan.</b> Contoh: Sekarang Januari, maka isi dengan 31 Maret.</li>
