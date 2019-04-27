@@ -10,4 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Media management function
 - Announcement request management function
 
+## [0.2.0] - 2019-04-27
+### Added
+- Announcement management function
+
 [0.1.0]: https://github.com/martinusalexander/sppt_kkis/tree/sppt_kkis_v_0_1_0
+[0.2.0]: https://github.com/martinusalexander/sppt_kkis/tree/sppt_kkis_v_0_2_0
