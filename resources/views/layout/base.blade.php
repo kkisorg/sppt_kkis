@@ -62,6 +62,13 @@
         <script type="text/javascript" src="{{ URL::asset('js/ckeditor.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/moment.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/bootstrap-datetimepicker.min.js') }}"></script>
+        <!-- JS for all pages -->
+        <script>
+            // Make sure all images are inside their respective parent
+            $(document).ready(function() {
+               $("img").addClass("img-responsive");
+            });
+        </script>
         @yield('extra_js')
     </head>
     <body>

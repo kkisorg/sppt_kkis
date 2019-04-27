@@ -12,7 +12,10 @@
         width: 10%;
     }
     th[name='title-col'] {
-        width: 35%;
+        width: 25%;
+    }
+    th[name='is-online-col'] {
+        width: 10%;
     }
     th[name='text-col'] {
         width: 15%;
@@ -38,6 +41,7 @@
                     <tr>
                         <th name="no-col"> No.</th>
                         <th name="title-col"> Nama </th>
+                        <th name="title-col"> Jenis </th>
                         <th name="text-col"> Teks </th>
                         <th name="image-col"> Gambar/Flyer </th>
                         <th name="is-active-col"> Aktif </th>
@@ -49,6 +53,10 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $medium->name }}</td>
+                        <td>
+                            @if ($medium->is_online) ONLINE
+                            @else OFFLINE @endif
+                        </td>
                         <td>
                             @if ($medium->text === 'REQUIRED') WAJIB
                             @elseif ($medium->text === 'OPTIONAL') OPSIONAL

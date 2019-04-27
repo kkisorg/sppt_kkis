@@ -4,7 +4,7 @@
 
 @section('extra_css')
 <style>
-#is-active-ul {
+#is-active-ul, #is-online-ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -26,6 +26,13 @@
                         <div class="row form-group center-block">
                             <label for="name"> Nama Media: </label>
                             <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
+                        <div class="row form-group center-block">
+                            <label> Jenis: </label>
+                            <ul id="is-online-ul">
+                                <li class="form-group"><label for="is-online-yes" class="radio-inline"><input type="radio" name="is-online" id="is-online-yes" value="yes" checked> Online </label></li>
+                                <li class="form-group"><label for="is-online-no" class="radio-inline"><input type="radio" name="is-online" id="is-online-no" value="no"> Offline </label></li>
+                            </ul>
                         </div>
                         <div class="form-group">
                             <label for="text"> Teks: </label>

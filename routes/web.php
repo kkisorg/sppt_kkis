@@ -52,3 +52,13 @@ Route::get('/announcement_request/edit/{announcement_request_id}', 'Announcement
 Route::post('/announcement_request/update', 'AnnouncementRequestController@update');
 Route::get('/announcement_request/view/{announcement_request_id}', 'AnnouncementRequestController@view');
 Route::get('/announcement_request/delete/{announcement_request_id}', 'AnnouncementRequestController@delete');
+
+// Announcement Controller
+Route::get('/announcement', 'AnnouncementController@index');
+Route::get('/announcement/approve', 'AnnouncementController@approve');
+Route::get('/announcement/create/{announcement_request_id}', 'AnnouncementController@create');
+Route::post('/announcement/insert', 'AnnouncementController@insert');
+Route::get('/announcement/edit/{announcement_request_id}', 'AnnouncementController@edit');
+Route::post('/announcement/update', 'AnnouncementController@update');
+Route::get('/announcement/view/{announcement_id}', 'AnnouncementController@view');
+Route::get('/announcement/delete/{announcement_id}', 'AnnouncementController@delete');

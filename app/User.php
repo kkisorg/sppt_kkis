@@ -84,4 +84,20 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\AnnouncementRequest', 'editor_id');
     }
+
+    /**
+     * Get the announcement record that belongs to the user.
+     */
+    public function announcement()
+    {
+        return $this->hasMany('App\Announcement', 'creator_id');
+    }
+
+    /**
+     * Get the announcement record that was edited by the user.
+     */
+    public function announcement_edit()
+    {
+        return $this->hasMany('App\Announcement', 'editor_id');
+    }
 }

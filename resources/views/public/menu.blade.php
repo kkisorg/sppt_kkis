@@ -37,6 +37,13 @@
                     </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/announcement">
+                                Lihat Seluruh Pengumuman
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class='hr'>
                                 <span class='hr-title'> Login sebagai: <b>{{ $user->name }}</b> </span>
                             </div>
@@ -73,6 +80,13 @@
                     <h3><b>Menu Admin</b></h3>
                 </div>
                 <div class="panel-body">
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/announcement/approve">
+                                Setujui (Approve) Pengumuman
+                            </a>
+                        </div>
+                    </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a class="btn btn-default btn-block" href="/media">
