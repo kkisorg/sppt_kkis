@@ -62,3 +62,12 @@ Route::get('/announcement/edit/{announcement_request_id}', 'AnnouncementControll
 Route::post('/announcement/update', 'AnnouncementController@update');
 Route::get('/announcement/view/{announcement_id}', 'AnnouncementController@view');
 Route::get('/announcement/delete/{announcement_id}', 'AnnouncementController@delete');
+
+// Offline Distribution Controller
+Route::get('/offline_distribution', 'OfflineDistributionController@index');
+Route::get('/offline_distribution/create', 'OfflineDistributionController@create');
+Route::post('/offline_distribution/insert', 'OfflineDistributionController@insert');
+Route::get('/offline_distribution/edit/{offline_distribution_id}', 'OfflineDistributionController@edit');
+Route::post('/offline_distribution/update', 'OfflineDistributionController@update');
+Route::get('/offline_distribution/view/{offline_distribution_id}', 'OfflineDistributionController@view');
+Route::get('/offline_distribution/delete/{offline_distribution_id}', 'OfflineDistributionController@delete');
