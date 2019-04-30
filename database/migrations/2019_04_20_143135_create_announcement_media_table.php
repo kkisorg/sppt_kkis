@@ -23,7 +23,7 @@ class CreateAnnouncementMediaTable extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('media_id')
                 ->references('id')->on('media')
-                ->onUpdate('cascade')->onDelete('cascade');;
+                ->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
