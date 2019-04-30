@@ -5,15 +5,6 @@
 @section('extra_js')
 <script>
     $(document).ready(function() {
-        ClassicEditor.create(document.querySelector('#header'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
-        ClassicEditor.create(document.querySelector('#content'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
-        ClassicEditor.create(document.querySelector('#footer'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
         $('#distributiondatetimepicker').datetimepicker({
             sideBySide: true,
             useStrict: true,
@@ -40,18 +31,6 @@
                         <div class="row form-group center-block" >
                             <label for="description"> Nama: </label>
                             <input type="text" name="name" id="name" class="form-control" required>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="header"> Header: </label>
-                            <textarea name="header" id="header" class="form-control" rows="5"></textarea>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="footer"> Isi: </label>
-                            <textarea name="content" id="content" class="form-control" rows="5"></textarea>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="footer"> Footer: </label>
-                            <textarea name="footer" id="footer" class="form-control" rows="5"></textarea>
                         </div>
                          <div class="row form-group center-block">
                             <label> Waktu Distribusi: </label>

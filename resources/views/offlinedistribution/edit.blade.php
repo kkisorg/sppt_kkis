@@ -5,15 +5,6 @@
 @section('extra_js')
 <script>
     $(document).ready(function() {
-        ClassicEditor.create(document.querySelector('#header'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
-        ClassicEditor.create(document.querySelector('#content'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
-        ClassicEditor.create(document.querySelector('#footer'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-        }).catch(error => {console.error(error);});
         $('#distributiondatetimepicker').datetimepicker({
             useCurrent: false,
             sideBySide: true,
@@ -34,7 +25,7 @@
         <div class="col xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3><b>Ubah Distribusi Baru</b></h3>
+                    <h3><b>Ubah Distribusi</b></h3>
                 </div>
                 <form action="/offline_distribution/update" role="form" method="POST" class="form-vertical">
                     {{ csrf_field() }}
@@ -43,18 +34,6 @@
                         <div class="row form-group center-block" >
                             <label for="description"> Nama: </label>
                             <input type="text" name="name" id="name" class="form-control" value="{{ $offline_distribution->name }}" required>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="header"> Header: </label>
-                            <textarea name="header" id="header" class="form-control" rows="5">{{ $offline_distribution->header }}</textarea>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="footer"> Isi: </label>
-                            <textarea name="content" id="content" class="form-control" rows="5">{{ $offline_distribution->content }}</textarea>
-                        </div>
-                        <div class="row form-group center-block">
-                            <label for="footer"> Footer: </label>
-                            <textarea name="footer" id="footer" class="form-control" rows="5">{{ $offline_distribution->footer }}</textarea>
                         </div>
                         <div class="row form-group center-block">
                             <label> Waktu Distribusi: </label>

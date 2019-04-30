@@ -71,3 +71,5 @@ Route::get('/offline_distribution/edit/{offline_distribution_id}', 'OfflineDistr
 Route::post('/offline_distribution/update', 'OfflineDistributionController@update');
 Route::get('/offline_distribution/view/{offline_distribution_id}', 'OfflineDistributionController@view');
 Route::get('/offline_distribution/delete/{offline_distribution_id}', 'OfflineDistributionController@delete');
+Route::get('/offline_distribution/edit_announcement/{offline_distribution_id}', 'OfflineDistributionController@edit_announcement');
+Route::post('/offline_distribution/update_announcement', 'OfflineDistributionController@update_announcement');

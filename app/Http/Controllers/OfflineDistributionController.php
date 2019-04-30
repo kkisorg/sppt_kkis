@@ -98,9 +98,6 @@ class OfflineDistributionController extends Controller
 
         $now = Carbon::now();
         $name = $request->input('name');
-        $header = $request->input('header');
-        $footer = $request->input('footer');
-        $content = $request->input('content');
         $media_id = $request->input('media-id');
         $distribution_datetime = $request->input('distribution-datetime');
         $deadline_datetime = $request->input('deadline-datetime');
@@ -109,9 +106,6 @@ class OfflineDistributionController extends Controller
         $deadline_timestamp = Carbon::parse($deadline_datetime)->timestamp;
         OfflineDistribution::create([
             'name' => $name,
-            'header' => $header,
-            'footer' => $footer,
-            'content' => $content,
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp
@@ -129,6 +123,12 @@ class OfflineDistributionController extends Controller
      */
     public function edit(Request $request, string $offline_distribution_id)
     {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
         $offline_distribution = OfflineDistribution::findOrFail($offline_distribution_id);
         // Convert some annoucement request details into the frontend format
         $offline_distribution->distribution_datetime =
@@ -160,9 +160,6 @@ class OfflineDistributionController extends Controller
         $now = Carbon::now();
         $offline_distribution_id = $request->input('id');
         $name = $request->input('name');
-        $header = $request->input('header');
-        $footer = $request->input('footer');
-        $content = $request->input('content');
         $media_id = $request->input('media-id');
         $distribution_datetime = $request->input('distribution-datetime');
         $deadline_datetime = $request->input('deadline-datetime');
@@ -171,9 +168,6 @@ class OfflineDistributionController extends Controller
         $deadline_timestamp = Carbon::parse($deadline_datetime)->timestamp;
         OfflineDistribution::where('id', $offline_distribution_id)->update([
             'name' => $name,
-            'header' => $header,
-            'footer' => $footer,
-            'content' => $content,
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp
@@ -229,5 +223,63 @@ class OfflineDistributionController extends Controller
         OfflineDistribution::destroy($offline_distribution_id);
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Distribusi telah berhasil dihapus.');
+    }
+
+    /**
+     * Display the edit announcement inside offline distribution form
+     *
+     * @param Request $request
+     * @param string $offline_distribution_id
+     * @return Response
+     */
+    public function edit_announcement(Request $request, string $offline_distribution_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $offline_distribution = OfflineDistribution::findOrFail($offline_distribution_id);
+
+        // Convert some offline distribution details into the frontend format
+        $offline_distribution->media_name = $offline_distribution->media->name;
+        $offline_distribution->distribution_datetime =
+            Carbon::createFromTimestamp($offline_distribution->distribution_timestamp)->format('l, j F Y, g:i a');
+        $offline_distribution->deadline_datetime =
+            Carbon::createFromTimestamp($offline_distribution->deadline_timestamp)->format('l, j F Y, g:i a');
+
+        return view(
+            'offlinedistribution.announcement.edit', ['offline_distribution' => $offline_distribution]
+        );
+    }
+
+    /**
+     * Update the announcement inside offline distribution into the database
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function update_announcement(Request $request)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $now = Carbon::now();
+        $offline_distribution_id = $request->input('id');
+        $header = $request->input('header');
+        $content = $request->input('content');
+        $footer = $request->input('footer');
+
+        OfflineDistribution::where('id', $offline_distribution_id)->update([
+            'header' => $header,
+            'content' => $content,
+            '$ooter' => $footer
+        ]);
+        return redirect('/offline_distribution', 303)
+            ->with('success_message', 'Pengumuman dalam distribusi telah berhasil diubah.');
     }
 }

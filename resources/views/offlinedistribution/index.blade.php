@@ -9,16 +9,13 @@
         width: 5%;
     }
     th[name='description-col'] {
-        width: 20%;
-    }
-    th[name='distribution-datetime-col'] {
-        width: 20%;
-    }
-    th[name='deadline-datetime-col'] {
-        width: 20%;
-    }
-    th[name='status-col'] {
         width: 15%;
+    }
+    th[name='datetime-col'] {
+        width: 20%;
+    }
+    th[name='content-col'] {
+        width: 40%;
     }
     th[name='media-col'] {
         width: 10%;
@@ -44,9 +41,8 @@
                 <tr>
                     <th name="no-col"> No.</th>
                     <th name="description-col"> Deskripsi </th>
-                    <th name="distribution-datetime-col"> Waktu Distribusi </th>
-                    <th name="deadline-datetime-col"> Batas Waktu (Deadline) </th>
-                    <th name="status-col" class="hidden-xs"> Status </th>
+                    <th name="datetime-col"> Waktu </th>
+                    <th name="content-col"> Isi Pengumuman </th>
                     <th name="media-col"> Jenis Media </th>
                     <th name="manage-col"> Kelola </th>
                 </tr>
@@ -54,11 +50,25 @@
             <tbody>
                 @foreach ($offline_distributions as $distribution)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $distribution->name }}</td>
-                    <td>{{ $distribution->distribution_datetime }} </td>
-                    <td>{{ $distribution->deadline_datetime }} </td>
+                    <td rowspan="3">{{ $loop->iteration }}</td>
+                    <td rowspan="3">{{ $distribution->name }}</td>
+                    <td><b>Waktu Distribusi: </b><br>{{ $distribution->distribution_datetime }}</td>
+                    <td rowspan="2">Under development</td>
+                    <td rowspan="3">{{ $distribution->media_name }}</td>
+                    <td rowspan="3">
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-info" href="/offline_distribution/view/{{ $distribution->id }}"> Lihat </a>
+                            <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit/{{ $distribution->id }}"> Ubah </a>
+                            <a class="list-group-item list-group-item-danger" href="/offline_distribution/delete/{{ $distribution->id }}" onclick="return confirm('Apakah Anda yakin menghapus distribusi ini?\nPenghapusan ini tidak dapat dibatalkan.');"> Hapus </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Batas Waktu (Deadline): </b><br>{{ $distribution->deadline_datetime }}</td>
+                </tr>
+                <tr>
                     <td class="hidden-xs">
+                        <b>Status: </b><br>
                         @if (@$distribution->status === 'FINAL')
                         <span class="label label-danger">
                         @elseif (@$distribution->status === 'MENERIMA PENGUMUMAN')
@@ -69,12 +79,9 @@
                             {{ $distribution->status }}
                         </span>
                     </td>
-                    <td>{{ $distribution->media_name }}</td>
                     <td>
                         <div class="list-group">
-                            <a class="list-group-item list-group-item-info" href="/offline_distribution/view/{{ $distribution->id }}"> Lihat </a>
-                            <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit/{{ $distribution->id }}"> Ubah </a>
-                            <a class="list-group-item list-group-item-danger" href="/offline_distribution/delete/{{ $distribution->id }}" onclick="return confirm('Apakah Anda yakin menghapus distribusi ini?\nPenghapusan ini tidak dapat dibatalkan.');"> Hapus </a>
+                            <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit_announcement/{{ $distribution->id }}"> Ubah Pengumuman Dalam Distribusi </a>
                         </div>
                     </td>
                 </tr>
