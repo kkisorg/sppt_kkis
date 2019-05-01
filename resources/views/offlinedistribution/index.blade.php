@@ -53,7 +53,7 @@
                     <td rowspan="3">{{ $loop->iteration }}</td>
                     <td rowspan="3">{{ $distribution->name }}</td>
                     <td><b>Waktu Distribusi: </b><br>{{ $distribution->distribution_datetime }}</td>
-                    <td rowspan="2">Under development</td>
+                    <td rowspan="2">{{ $distribution->announcement_titles }}</td>
                     <td rowspan="3">{{ $distribution->media_name }}</td>
                     <td rowspan="3">
                         <div class="list-group">

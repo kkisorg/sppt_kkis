@@ -69,13 +69,19 @@ class Announcement extends Model
         return $this->belongsTo('App\AnnouncementRequest');
     }
 
-
-
     /**
      * Get the media associated with the announcement.
      */
     public function media()
     {
         return $this->belongsToMany('App\Media', 'announcement_media')->withPivot('content');
+    }
+
+    /**
+     * Get the offline distribution associated with the announcement.
+     */
+    public function offline_distribution()
+    {
+        return $this->belongsToMany('App\OfflineDistribution', 'announcement_offline_distribution')->withPivot('content');
     }
 }

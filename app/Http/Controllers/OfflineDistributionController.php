@@ -60,6 +60,7 @@ class OfflineDistributionController extends Controller
             } else {
                 $distribution->status = 'MENERIMA PENGUMUMAN';
             }
+            $distribution->announcement_titles = join(', ', $distribution->announcement()->pluck('title')->toArray());
         }
         return view('offlinedistribution.index', ['offline_distributions' => $offline_distributions]);
     }

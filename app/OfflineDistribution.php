@@ -59,4 +59,12 @@ class OfflineDistribution extends Model
             'media_id'
         );
     }
+
+    /**
+     * Get the announcement associated with the offline distribution.
+     */
+    public function announcement()
+    {
+        return $this->belongsToMany('App\Announcement', 'announcement_offline_distribution')->withPivot('content');
+    }
 }

@@ -35,6 +35,11 @@
                         <div><h5><b>Batas Waktu (Deadline): </b>{{ $offline_distribution->deadline_datetime }}</h5></div>
                         <div><h5><b>Media: </b>{{ $offline_distribution->media_name }}</h5></div>
                         <hr>
+                        <div><h5><b>Daftar Pengumuman (Untuk Referensi): </b></h5></div>
+                        @foreach ($offline_distribution->announcement as $announcement)
+                        <div>{!! $announcement->pivot->content !!}</div>
+                        @endforeach
+                        <hr>
                         <div class="row form-group center-block">
                             <label for="header"> Header: </label>
                             <textarea name="header" id="header" class="form-control" rows="5">{{ $offline_distribution->header }}</textarea>
