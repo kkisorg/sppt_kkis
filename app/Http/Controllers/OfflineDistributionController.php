@@ -233,7 +233,7 @@ class OfflineDistributionController extends Controller
      * @param string $offline_distribution_id
      * @return Response
      */
-    public function edit_announcement(Request $request, string $offline_distribution_id)
+    public function edit_content(Request $request, string $offline_distribution_id)
     {
         // Non-admin cannot perform this action
         $user = Auth::user();
@@ -251,7 +251,7 @@ class OfflineDistributionController extends Controller
             Carbon::createFromTimestamp($offline_distribution->deadline_timestamp)->format('l, j F Y, g:i a');
 
         return view(
-            'offlinedistribution.announcement.edit', ['offline_distribution' => $offline_distribution]
+            'offlinedistribution.content.edit', ['offline_distribution' => $offline_distribution]
         );
     }
 
@@ -261,7 +261,7 @@ class OfflineDistributionController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function update_announcement(Request $request)
+    public function update_content(Request $request)
     {
         // Non-admin cannot perform this action
         $user = Auth::user();
@@ -278,7 +278,7 @@ class OfflineDistributionController extends Controller
         OfflineDistribution::where('id', $offline_distribution_id)->update([
             'header' => $header,
             'content' => $content,
-            '$ooter' => $footer
+            'footer' => $footer
         ]);
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Pengumuman dalam distribusi telah berhasil diubah.');

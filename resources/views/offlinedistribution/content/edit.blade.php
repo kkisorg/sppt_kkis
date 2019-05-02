@@ -26,7 +26,7 @@
                 <div class="panel-heading">
                     <h3><b>Ubah Pengumuman Dalam Distribusi</b></h3>
                 </div>
-                <form action="/offline_distribution/update" role="form" method="POST" class="form-vertical">
+                <form action="/offline_distribution/update_content" role="form" method="POST" class="form-vertical">
                     {{ csrf_field() }}
                     <input type="hidden" name="id" id="id" value="{{ $offline_distribution->id }}">
                     <div class="panel-body">

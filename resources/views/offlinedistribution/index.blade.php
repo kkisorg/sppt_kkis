@@ -81,7 +81,7 @@
                     </td>
                     <td>
                         <div class="list-group">
-                            <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit_announcement/{{ $distribution->id }}"> Ubah Pengumuman Dalam Distribusi </a>
+                            <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit_content/{{ $distribution->id }}"> Ubah Pengumuman Dalam Distribusi </a>
                         </div>
                     </td>
                 </tr>
