@@ -1,6 +1,6 @@
 @extends('layout.base')
 
-@section('title', 'Ubah Distribusi')
+@section('title', 'Ubah Pengumuman Dalam Distribusi')
 
 @section('extra_js')
 <script>
