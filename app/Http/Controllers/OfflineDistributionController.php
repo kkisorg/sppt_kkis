@@ -6,6 +6,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use App\Announcement;
 use App\Media;
 use App\OfflineDistribution;
 
@@ -105,12 +106,17 @@ class OfflineDistributionController extends Controller
         // Convert dates to database format
         $distribution_timestamp = Carbon::parse($distribution_datetime)->timestamp;
         $deadline_timestamp = Carbon::parse($deadline_datetime)->timestamp;
-        OfflineDistribution::create([
+
+        $offline_distribution = OfflineDistribution::create([
             'name' => $name,
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp
         ]);
+
+        // Sync announcement
+        $this->sync_announcement($offline_distribution->id);
+
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Distribusi telah berhasil dibuat.');
     }
@@ -173,6 +179,10 @@ class OfflineDistributionController extends Controller
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp
         ]);
+
+        // Sync announcement
+        $this->sync_announcement($offline_distribution_id);
+
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Distribusi telah berhasil diubah.');
     }
@@ -282,5 +292,41 @@ class OfflineDistributionController extends Controller
         ]);
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Pengumuman dalam distribusi telah berhasil diubah.');
+    }
+
+    /**
+     * Sync the announcement that must be linked to the offline distribution
+     *
+     * @param string $offline_distribution_id
+     * @return void
+     */
+    public function sync_announcement(string $offline_distribution_id)
+    {
+        $offline_distribution = OfflineDistribution::findOrFail($offline_distribution_id);
+
+        $announcements = Announcement::whereRaw(
+            'event_timestamp between ? and (? + duration * 24 * 3600)',
+            [$offline_distribution->distribution_timestamp, $offline_distribution->distribution_timestamp]
+        )->whereHas(
+            'announcement_request', function ($query) use ($offline_distribution) {
+                $query->where('create_timestamp', '<', $offline_distribution->deadline_timestamp);
+            }
+        )->whereHas(
+            'media', function ($query) use ($offline_distribution) {
+                $query->where('id', '=', $offline_distribution->offline_media_id);
+            }
+        )->get();
+
+        // Associate the announcement to the offline distribution
+        $association = array();
+        foreach ($announcements as $announcement) {
+            $content = $announcement->media()->where('id', $offline_distribution->offline_media_id)->first()->pivot->content;
+            $association += array(
+                $announcement->id => ['content' => $content]
+            );
+        }
+        $offline_distribution->announcement()->sync($association);
+
+        return;
     }
 }
