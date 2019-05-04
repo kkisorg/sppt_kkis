@@ -96,6 +96,13 @@
                     </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/monthly_offline_distribution_schedule">
+                                Buat/Ubah/Hapus Jadwal Distribusi Offline Bulanan
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a class="btn btn-default btn-block" href="/media">
                                 Buat/Ubah/Hapus Media
                             </a>

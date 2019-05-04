@@ -73,3 +73,12 @@ Route::get('/offline_distribution/view/{offline_distribution_id}', 'OfflineDistr
 Route::get('/offline_distribution/delete/{offline_distribution_id}', 'OfflineDistributionController@delete');
 Route::get('/offline_distribution/edit_content/{offline_distribution_id}', 'OfflineDistributionController@edit_content');
 Route::post('/offline_distribution/update_content', 'OfflineDistributionController@update_content');
+
+// Monthly Offline Distribution Schedule Controller
+Route::get('/monthly_offline_distribution_schedule', 'MonthlyOfflineDistributionScheduleController@index');
+Route::get('/monthly_offline_distribution_schedule/create', 'MonthlyOfflineDistributionScheduleController@create');
+Route::post('/monthly_offline_distribution_schedule/insert', 'MonthlyOfflineDistributionScheduleController@insert');
+Route::get('/monthly_offline_distribution_schedule/edit/{announcement_request_id}', 'MonthlyOfflineDistributionScheduleController@edit');
+Route::post('/monthly_offline_distribution_schedule/update', 'MonthlyOfflineDistributionScheduleController@update');
+Route::get('/monthly_offline_distribution_schedule/view/{announcement_request_id}', 'MonthlyOfflineDistributionScheduleController@view');
+Route::get('/monthly_offline_distribution_schedule/delete/{announcement_request_id}', 'MonthlyOfflineDistributionScheduleController@delete');
