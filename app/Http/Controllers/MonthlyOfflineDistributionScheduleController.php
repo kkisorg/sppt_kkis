@@ -289,7 +289,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                 $offline_distribution = OfflineDistribution::create([
                     'name' => $schedule->name.' '.Carbon::parse($distribution_date)->format('F Y'),
                     'header' => $schedule->default_header,
-                    'footer' => $schedule->default_header,
+                    'footer' => $schedule->default_footer,
                     'offline_media_id' => $schedule->offline_media_id,
                     'distribution_timestamp' => $distribution_timestamp,
                     'deadline_timestamp' => $deadline_timestamp
