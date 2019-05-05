@@ -296,4 +296,27 @@ class OfflineDistributionController extends Controller
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Pengumuman dalam distribusi telah berhasil diubah.');
     }
+
+    /**
+     * Display the list of announcement
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function view_all(Request $request)
+    {
+        $now = Carbon::now();
+        $two_weeks_ago = $now->subDays(14);
+        $two_weeks_ago_timestamp = $two_weeks_ago->timestamp;
+
+        $present_offline_distributions = OfflineDistribution
+            ::where('distribution_timestamp', '>', $two_weeks_ago_timestamp)
+            ->orderBy('distribution_timestamp')
+            ->get();
+
+        return view(
+            'offlinedistribution.public.view',
+            ['present_offline_distributions' => $present_offline_distributions]
+        );
+    }
 }
