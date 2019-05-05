@@ -45,7 +45,7 @@
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a class="btn btn-default btn-block" href="/view_offline_distribution">
-                                Lihat Seluruh Distribusi Offline
+                                Lihat Seluruh Distribusi Offline <br> ({{$offline_media_name}})
                             </a>
                         </div>
                     </div>
