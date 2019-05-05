@@ -28,31 +28,12 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * Display the list of announcement
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function index(Request $request)
-    {
-        $now = Carbon::now();
-        $current_timestamp = $now->timestamp;
-
-        $present_announcements = Announcement
-            ::where('event_timestamp', '>', $current_timestamp)
-            ->orderBy('event_timestamp')
-            ->get();
-
-        return view('announcement.index', ['present_announcements' => $present_announcements]);
-    }
-
-    /**
      * Display the announcement approval center page
      *
      * @param Request $request
      * @return Response
      */
-    public function approve(Request $request)
+    public function index(Request $request)
     {
         // Non-admin cannot perform this action
         $user = Auth::user();
@@ -100,7 +81,7 @@ class AnnouncementController extends Controller
             order by event_timestamp
         ', [$now->timestamp]);
 
-        return view('announcement.approve', [
+        return view('announcement.index', [
             'approved_announcements' => $approved_announcements,
             'new_announcement_requests' => $new_announcement_requests,
             'revised_announcement_requests' => $revised_announcement_requests
@@ -324,5 +305,24 @@ class AnnouncementController extends Controller
         Announcement::destroy($announcement_id);
         return redirect('/announcement/approve', 303)
             ->with('success_message', 'Pengumuman telah berhasil dihapus.');
+    }
+
+    /**
+     * Display the list of announcement
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function view_all(Request $request)
+    {
+        $now = Carbon::now();
+        $current_timestamp = $now->timestamp;
+
+        $present_announcements = Announcement
+            ::where('event_timestamp', '>', $current_timestamp)
+            ->orderBy('event_timestamp')
+            ->get();
+
+        return view('announcement.public.view', ['present_announcements' => $present_announcements]);
     }
 }
