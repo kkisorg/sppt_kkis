@@ -26,6 +26,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        // Add monthly offline distribution
+        $schedule
+            ->call('App\Http\Controllers\MonthlyOfflineDistributionScheduleController@run')
+            ->weeklyOn(1, '3:00');
     }
 
     /**

@@ -224,4 +224,98 @@ class MonthlyOfflineDistributionScheduleController extends Controller
         return redirect('/monthly_offline_distribution_schedule', 303)
             ->with('success_message', 'Jadwal distribusi offline bulanan telah berhasil dihapus.');
     }
+
+    /**
+     * Run offline distribution insertion jobs automatically
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $now = Carbon::now();
+        $current_weekofmonth = $now->weekOfMonth;
+
+        // Special action for week 5
+        $weekofmonths = array($current_weekofmonth);
+        if ($current_weekofmonth == 5) {
+            return;
+        } elseif ($current_weekofmonth == 4) {
+            $weekofmonths += array(5);
+        }
+
+        foreach ($weekofmonths as $weekofmonth) {
+            $schedules = MonthlyOfflineDistributionSchedule
+                ::where('distribution_weekofmonth', $weekofmonth)
+                ->get();
+            foreach ($schedules as $schedule) {
+                $ordinal_number = array(
+                    1 => 'first',
+                    2 => 'second',
+                    3 => 'third',
+                    4 => 'fourth',
+                    5 => 'fifth'
+                );
+                $dayofweek = array(
+                    0 => 'Sunday',
+                    1 => 'Monday',
+                    2 => 'Tuesday',
+                    3 => 'Wednesday',
+                    4 => 'Thursday',
+                    5 => 'Friday',
+                    6 => 'Saturday'
+                );
+
+                $distribution_date = Carbon
+                    ::createFromTimestamp(strtotime(
+                        $ordinal_number[$weekofmonth].' '.$dayofweek[$schedule->distribution_dayofweek].' of next month')
+                    )->format('Y-m-d');
+                $distribution_time = $schedule->distribution_time;
+                $distribution_timestamp = Carbon::parse($distribution_date.' '.$distribution_time)->timestamp;
+                $deadline_date = Carbon
+                    ::createFromTimestamp(strtotime(
+                        $distribution_date.' last '.$dayofweek[$schedule->deadline_dayofweek])
+                    )->format('Y-m-d');
+                $deadline_time = $schedule->deadline_time;
+                $deadline_timestamp = Carbon::parse($deadline_date.' '.$deadline_time)->timestamp;
+
+                // This case happen when there is no fifth week next month
+                if (Carbon::parse($distribution_date)->greaterThan(Carbon::createFromTimestamp(strtotime('last day of next month')))) {
+                    continue;
+                }
+
+                $offline_distribution = OfflineDistribution::create([
+                    'name' => $schedule->name.' '.Carbon::parse($distribution_date)->format('F Y'),
+                    'header' => $schedule->default_header,
+                    'footer' => $schedule->default_header,
+                    'offline_media_id' => $schedule->offline_media_id,
+                    'distribution_timestamp' => $distribution_timestamp,
+                    'deadline_timestamp' => $deadline_timestamp
+                ]);
+
+                $announcements = Announcement::whereRaw(
+                    'event_timestamp between ? and (? + duration * 24 * 3600)',
+                    [$offline_distribution->distribution_timestamp, $offline_distribution->distribution_timestamp]
+                )->whereHas(
+                    'announcement_request', function ($query) use ($offline_distribution) {
+                        $query->where('create_timestamp', '<', $offline_distribution->deadline_timestamp);
+                    }
+                )->whereHas(
+                    'media', function ($query) use ($offline_distribution) {
+                        $query->where('id', '=', $offline_distribution->offline_media_id);
+                    }
+                )->get();
+
+                // Associate the announcement to the offline distribution
+                $association = array();
+                foreach ($announcements as $announcement) {
+                    $content = $announcement->media()->where('id', $offline_distribution->offline_media_id)->first()->pivot->content;
+                    $association += array(
+                        $announcement->id => ['content' => $content]
+                    );
+                }
+                $offline_distribution->announcement()->sync($association);
+            }
+        }
+        return;
+    }
 }
