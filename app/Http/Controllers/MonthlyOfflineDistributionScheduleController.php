@@ -9,9 +9,12 @@ use Illuminate\Http\Request;
 use App\Media;
 use App\MonthlyOfflineDistributionSchedule;
 use App\OfflineDistribution;
+use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
 
 class MonthlyOfflineDistributionScheduleController extends Controller
 {
+    use AnnouncementOfflineDistributionLinker;
+
     /**
      * Instantiate a new controller instance.
      *
@@ -292,28 +295,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                     'deadline_timestamp' => $deadline_timestamp
                 ]);
 
-                $announcements = Announcement::whereRaw(
-                    'event_timestamp between ? and (? + duration * 24 * 3600)',
-                    [$offline_distribution->distribution_timestamp, $offline_distribution->distribution_timestamp]
-                )->whereHas(
-                    'announcement_request', function ($query) use ($offline_distribution) {
-                        $query->where('create_timestamp', '<', $offline_distribution->deadline_timestamp);
-                    }
-                )->whereHas(
-                    'media', function ($query) use ($offline_distribution) {
-                        $query->where('id', '=', $offline_distribution->offline_media_id);
-                    }
-                )->get();
-
-                // Associate the announcement to the offline distribution
-                $association = array();
-                foreach ($announcements as $announcement) {
-                    $content = $announcement->media()->where('id', $offline_distribution->offline_media_id)->first()->pivot->content;
-                    $association += array(
-                        $announcement->id => ['content' => $content]
-                    );
-                }
-                $offline_distribution->announcement()->sync($association);
+                $this->sync_announcement($offline_distribution->id);
             }
         }
         return;
