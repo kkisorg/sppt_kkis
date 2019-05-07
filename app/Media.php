@@ -85,4 +85,19 @@ class Media extends Model
         return $this->belongsToMany('App\Announcement', 'announcement_media')->withPivot('content');
     }
 
+    /**
+     * Get the offline distribution associated with the media.
+     */
+    public function offline_distribution()
+    {
+        return $this->hasManyThrough(
+            'App\OfflineDistribution',
+            'App\OfflineMedia',
+            'media_id',
+            'offline_media_id',
+            'id',
+            'media_id'
+        );
+    }
+
 }

@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OfflineMedia extends Model
+class OfflineDistribution extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'offline_media';
+    protected $table = 'offline_distribution';
 
     /**
      * The attributes that aren't mass assignable.
@@ -46,18 +46,25 @@ class OfflineMedia extends Model
     const UPDATED_AT = 'update_timestamp';
 
     /**
-     * Get the media associated with the offline media.
+     * Get the media associated with the offline distribution.
      */
     public function media()
     {
-        return $this->belongsTo('App\Media');
+        return $this->hasOneThrough(
+            'App\Media',
+            'App\OfflineMedia',
+            'media_id',
+            'id',
+            'offline_media_id',
+            'media_id'
+        );
     }
 
     /**
-     * Get the offline distribution associated with the offline media.
+     * Get the announcement associated with the offline distribution.
      */
-    public function offline_distribution()
+    public function announcement()
     {
-        $this->hasMany('App\OfflineDistribution', 'offline_media_id', 'media_id');
+        return $this->belongsToMany('App\Announcement', 'announcement_offline_distribution')->withPivot('content');
     }
 }

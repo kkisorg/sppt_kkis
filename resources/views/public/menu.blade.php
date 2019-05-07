@@ -37,8 +37,15 @@
                     </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-default btn-block" href="/announcement">
+                            <a class="btn btn-default btn-block" href="/view_announcement">
                                 Lihat Seluruh Pengumuman
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/view_offline_distribution">
+                                Lihat Seluruh Distribusi Offline <br> ({{$offline_media_name}})
                             </a>
                         </div>
                     </div>
@@ -82,8 +89,22 @@
                 <div class="panel-body">
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-default btn-block" href="/announcement/approve">
+                            <a class="btn btn-default btn-block" href="/announcement">
                                 Setujui (Approve) Pengumuman
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/offline_distribution">
+                                Buat/Ubah/Hapus Distribusi Offline
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/monthly_offline_distribution_schedule">
+                                Buat/Ubah/Hapus Jadwal Distribusi Offline Bulanan
                             </a>
                         </div>
                     </div>
