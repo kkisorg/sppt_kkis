@@ -2,6 +2,14 @@
 
 @section('title', 'Buat Jadwal Distribusi Bulanan Baru')
 
+@section('extra_css')
+<style>
+    .bootstrap-tagsinput {
+        width: 100% !important;
+    }
+</style>
+@endsection
+
 @section('extra_js')
 <script>
     $(document).ready(function() {
@@ -86,6 +94,10 @@
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
                             </div>
+                        </div>
+                        <div class="row form-group center-block">
+                            <label for="recipient-email"> Daftar Email Penerima Pengumuman (dipisahkan oleh koma): </label>
+                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control" required>
                         </div>
                         <div class="row form-group center-block">
                             <label for="media-id"> Jenis Media: </label>

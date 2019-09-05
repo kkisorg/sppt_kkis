@@ -109,6 +109,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
         $distribution_time = $request->input('distribution-time');
         $deadline_dayofweek = $request->input('deadline-dayofweek');
         $deadline_time = $request->input('deadline-time');
+        $recipient_email = $request->input('recipient-email');
 
         // Convert time to database format
         $distribution_time = Carbon::parse($distribution_time)->format('H:i:s');
@@ -123,7 +124,8 @@ class MonthlyOfflineDistributionScheduleController extends Controller
             'distribution_dayofweek' => $distribution_dayofweek,
             'distribution_time' => $distribution_time,
             'deadline_dayofweek' => $deadline_dayofweek,
-            'deadline_time' => $deadline_time
+            'deadline_time' => $deadline_time,
+            'recipient_email' => $recipient_email
         ]);
 
         return redirect('/monthly_offline_distribution_schedule', 303)
@@ -185,6 +187,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
         $distribution_time = $request->input('distribution-time');
         $deadline_dayofweek = $request->input('deadline-dayofweek');
         $deadline_time = $request->input('deadline-time');
+        $recipient_email = $request->input('recipient-email');
 
         // Convert time to database format
         $distribution_time = Carbon::parse($distribution_time)->format('H:i:s');
@@ -199,7 +202,8 @@ class MonthlyOfflineDistributionScheduleController extends Controller
             'distribution_dayofweek' => $distribution_dayofweek,
             'distribution_time' => $distribution_time,
             'deadline_dayofweek' => $deadline_dayofweek,
-            'deadline_time' => $deadline_time
+            'deadline_time' => $deadline_time,
+            'recipient_email' => $recipient_email
         ]);
 
         return redirect('/monthly_offline_distribution_schedule', 303)

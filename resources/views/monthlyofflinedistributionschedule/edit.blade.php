@@ -89,6 +89,10 @@
                             </div>
                         </div>
                         <div class="row form-group center-block">
+                            <label for="recipient-email"> Daftar Email Penerima Pengumuman (dipisahkan oleh koma): </label>
+                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control" value="{{$monthly_offline_distribution_schedule->recipient_email}}" required>
+                        </div>
+                        <div class="row form-group center-block">
                             <label for="media-id"> Jenis Media: </label>
                             <select name="media-id" id="media-id" class="form-control">
                                 @foreach ($media as $medium)
