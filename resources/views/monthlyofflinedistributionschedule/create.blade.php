@@ -2,14 +2,6 @@
 
 @section('title', 'Buat Jadwal Distribusi Bulanan Baru')
 
-@section('extra_css')
-<style>
-    .bootstrap-tagsinput {
-        width: 100% !important;
-    }
-</style>
-@endsection
-
 @section('extra_js')
 <script>
     $(document).ready(function() {

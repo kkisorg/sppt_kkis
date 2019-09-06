@@ -54,6 +54,10 @@
                 font-weight: bold;
             }
 
+            .bootstrap-tagsinput {
+                width: 100% !important;
+            }
+
         </style>
         @yield('extra_css')
 
