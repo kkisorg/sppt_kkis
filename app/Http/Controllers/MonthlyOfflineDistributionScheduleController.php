@@ -284,6 +284,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                     )->format('Y-m-d');
                 $deadline_time = $schedule->deadline_time;
                 $deadline_timestamp = Carbon::parse($deadline_date.' '.$deadline_time)->timestamp;
+                $recipient_email = $schedule->recipient_email;
 
                 // This case happen when there is no fifth week next month
                 if (Carbon::parse($distribution_date)->greaterThan(Carbon::createFromTimestamp(strtotime('last day of next month')))) {
@@ -296,7 +297,8 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                     'footer' => $schedule->default_footer,
                     'offline_media_id' => $schedule->offline_media_id,
                     'distribution_timestamp' => $distribution_timestamp,
-                    'deadline_timestamp' => $deadline_timestamp
+                    'deadline_timestamp' => $deadline_timestamp,
+                    'recipient_email' => $recipient_email
                 ]);
 
                 $this->sync_announcement($offline_distribution->id);

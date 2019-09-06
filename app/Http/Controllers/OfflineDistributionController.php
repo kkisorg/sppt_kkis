@@ -106,6 +106,7 @@ class OfflineDistributionController extends Controller
         $media_id = $request->input('media-id');
         $distribution_datetime = $request->input('distribution-datetime');
         $deadline_datetime = $request->input('deadline-datetime');
+        $recipient_email = $request->input('recipient-email');
         // Convert dates to database format
         $distribution_timestamp = Carbon::parse($distribution_datetime)->timestamp;
         $deadline_timestamp = Carbon::parse($deadline_datetime)->timestamp;
@@ -114,7 +115,8 @@ class OfflineDistributionController extends Controller
             'name' => $name,
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
-            'deadline_timestamp' => $deadline_timestamp
+            'deadline_timestamp' => $deadline_timestamp,
+            'recipient_email' => $recipient_email
         ]);
 
         // Sync announcement
@@ -173,6 +175,7 @@ class OfflineDistributionController extends Controller
         $media_id = $request->input('media-id');
         $distribution_datetime = $request->input('distribution-datetime');
         $deadline_datetime = $request->input('deadline-datetime');
+        $recipient_email = $request->input('recipient-email');
         // Convert dates to database format
         $distribution_timestamp = Carbon::parse($distribution_datetime)->timestamp;
         $deadline_timestamp = Carbon::parse($deadline_datetime)->timestamp;
@@ -180,7 +183,8 @@ class OfflineDistributionController extends Controller
             'name' => $name,
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
-            'deadline_timestamp' => $deadline_timestamp
+            'deadline_timestamp' => $deadline_timestamp,
+            'recipient_email' => $recipient_email
         ]);
 
         // Sync announcement
