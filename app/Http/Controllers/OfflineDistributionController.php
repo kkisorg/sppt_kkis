@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 use App\Announcement;
 use App\Media;
 use App\OfflineDistribution;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
+use App\Mail\ShareOfflineDistribution;
 
 class OfflineDistributionController extends Controller
 {
@@ -322,5 +324,33 @@ class OfflineDistributionController extends Controller
             'offlinedistribution.public.view',
             ['present_offline_distributions' => $present_offline_distributions]
         );
+    }
+
+    /**
+     * Send the announcement in the distribution to the recipient list, using email.
+     *
+     * @param Request $request
+     * @param string $offline_distribution_id
+     * @return Response
+     */
+    public function share(Request $request, string $offline_distribution_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $offline_distribution = OfflineDistribution::findOrFail($offline_distribution_id);
+        $recipient_email = $offline_distribution->recipient_email;
+
+        $recipient_email_array = explode(",", $recipient_email);
+
+        Mail::to($recipient_email_array)
+            ->bcc(config('mail.from.address'))
+            ->send(new ShareOfflineDistribution($offline_distribution));
+
+        return redirect('/offline_distribution', 303)
+            ->with('success_message', 'Distribusi telah berhasil dibagikan ke '.$recipient_email);
     }
 }
