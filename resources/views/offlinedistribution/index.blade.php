@@ -60,6 +60,9 @@
                             <a class="list-group-item list-group-item-info" href="/offline_distribution/view/{{ $distribution->id }}"> Lihat </a>
                             <a class="list-group-item list-group-item-warning" href="/offline_distribution/edit/{{ $distribution->id }}"> Ubah </a>
                             <a class="list-group-item list-group-item-danger" href="/offline_distribution/delete/{{ $distribution->id }}" onclick="return confirm('Apakah Anda yakin menghapus distribusi ini?\nPenghapusan ini tidak dapat dibatalkan.');"> Hapus </a>
+                            @if (@$distribution->status === 'FINAL')
+                            <a class="list-group-item list-group-item-success" href="/offline_distribution/share/{{ $distribution->id }}" onclick="return confirm('Apakah Anda yakin mengirim isi pengumuman dalam distribusi ini melalui email?');"> Bagikan melalui email </a>
+                            @endif
                         </div>
                     </td>
                 </tr>

@@ -23,6 +23,9 @@
                     <div><h4><b>Batas Waktu (Deadline): </b></h4></div>
                     <div>{{ $offline_distribution->deadline_datetime }}</div>
                     <hr>
+                    <div><h4><b>Daftar Email Penerima Distribusi: </b></h4></div>
+                    <div>{{ $offline_distribution->recipient_email }}</div>
+                    <hr>
                     <div><h4><b> Media Distribusi: </b></h4></div>
                     <div>{{ $offline_distribution->media_name }}</div>
                 </div>

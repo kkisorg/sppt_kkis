@@ -10,6 +10,7 @@
         <!-- CSS -->
         <link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ URL::asset('css/bootstrap-datetimepicker.min.css') }}">
+        <link rel="stylesheet" href="{{ URL::asset('css/bootstrap-tagsinput.css') }}">
         <!-- Optional CSS -->
         <link rel="stylesheet" href="{{ URL::asset('css/bootstrap-theme.min.css') }}">
         <!-- CSS for all pages -->
@@ -53,6 +54,10 @@
                 font-weight: bold;
             }
 
+            .bootstrap-tagsinput {
+                width: 100% !important;
+            }
+
         </style>
         @yield('extra_css')
 
@@ -62,6 +67,7 @@
         <script type="text/javascript" src="{{ URL::asset('js/ckeditor.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/moment.js') }}"></script>
         <script type="text/javascript" src="{{ URL::asset('js/bootstrap-datetimepicker.min.js') }}"></script>
+        <script type="text/javascript" src="{{ URL::asset('js/bootstrap-tagsinput.min.js') }}"></script>
         <!-- JS for all pages -->
         <script>
             // Make sure all images are inside their respective parent
