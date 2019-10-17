@@ -115,6 +115,9 @@ class OfflineDistributionController extends Controller
 
         $offline_distribution = OfflineDistribution::create([
             'name' => $name,
+            'header' => '',
+            'content' => '',
+            'footer' => '',
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp,
