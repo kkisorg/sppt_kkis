@@ -161,7 +161,8 @@ class AnnouncementController extends Controller
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
 
-        return redirect('/announcement/approve', 303)->with('success_message', 'Persetujuan pengumuman baru telah berhasil.');
+        return redirect('/announcement', 303)
+            ->with('success_message', 'Persetujuan pengumuman baru telah berhasil.');
     }
 
     /**
@@ -253,7 +254,8 @@ class AnnouncementController extends Controller
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
 
-        return redirect('/announcement/approve', 303)->with('success_message', 'Persetujuan revisi pengumuman telah berhasil.');
+        return redirect('/announcement', 303)
+            ->with('success_message', 'Persetujuan revisi pengumuman telah berhasil.');
     }
 
     /**
@@ -303,7 +305,7 @@ class AnnouncementController extends Controller
         $announcement = Announcement::findOrFail($announcement_id);
 
         Announcement::destroy($announcement_id);
-        return redirect('/announcement/approve', 303)
+        return redirect('/announcement', 303)
             ->with('success_message', 'Pengumuman telah berhasil dihapus.');
     }
 
