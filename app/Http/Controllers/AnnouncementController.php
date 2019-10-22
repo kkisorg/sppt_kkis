@@ -12,10 +12,11 @@ use App\AnnouncementRequest;
 use App\Media;
 use App\OfflineDistribution;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
+use App\Http\Controllers\Traits\AnnouncementOnlineMediaPublishScheduler;
 
 class AnnouncementController extends Controller
 {
-    use AnnouncementOfflineDistributionLinker;
+    use AnnouncementOfflineDistributionLinker, AnnouncementOnlineMediaPublishScheduler;
 
     /**
      * Instantiate a new controller instance.
@@ -161,6 +162,9 @@ class AnnouncementController extends Controller
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
 
+        // Create online media publish schedule
+        $this->create_online_media_publish_schedule($announcement->id);
+
         return redirect('/announcement', 303)
             ->with('success_message', 'Persetujuan pengumuman baru telah berhasil.');
     }
@@ -253,6 +257,9 @@ class AnnouncementController extends Controller
 
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
+
+        // Create online media publish schedule
+        $this->create_online_media_publish_schedule($announcement->id);
 
         return redirect('/announcement', 303)
             ->with('success_message', 'Persetujuan revisi pengumuman telah berhasil.');

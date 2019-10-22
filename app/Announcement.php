@@ -84,4 +84,12 @@ class Announcement extends Model
     {
         return $this->belongsToMany('App\OfflineDistribution', 'announcement_offline_distribution')->withPivot('content');
     }
+
+    /**
+     * Get the online media publish schedule associated with the announcement.
+     */
+    public function announcement_online_media_publish_schedule()
+    {
+        return $this->hasMany('App\AnnouncementOnlineMediaPublishSchedule');
+    }
 }

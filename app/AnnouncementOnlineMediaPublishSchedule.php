@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OnlineMedia extends Model
+class AnnouncementOnlineMediaPublishSchedule extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'online_media';
+    protected $table = 'announcement_online_media_publish_schedule';
 
     /**
      * The attributes that aren't mass assignable.
@@ -46,18 +46,25 @@ class OnlineMedia extends Model
     const UPDATED_AT = 'update_timestamp';
 
     /**
-     * Get the media associated with the online media.
+     * Get the announcement associated with the online media publish schedule.
      */
-    public function media()
+    public function announcement()
     {
-        return $this->belongsTo('App\Media');
+        return $this->belongsTo('App\Announcement');
     }
 
     /**
-     * Get the online media publish schedule associated with the announcement.
+     * Get the media associated with the online media publish schedule.
      */
-    public function announcement_online_media_publish_schedule()
+    public function media()
     {
-        return $this->hasMany('App\AnnouncementOnlineMediaPublishSchedule', 'media_id', 'media_id');
+        return $this->hasOneThrough(
+            'App\Media',
+            'App\OnlineMedia',
+            'media_id',
+            'id',
+            'online_media_id',
+            'media_id'
+        );
     }
 }
