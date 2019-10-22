@@ -114,6 +114,13 @@ trait AnnouncementOnlineMediaPublishScheduler
                 $publish_pointer = $publish_pointer + 1;
                 $sequence_pointer = $sequence_pointer + 1;
             }
+
+            // Delete unused schedule if exists
+            AnnouncementOnlineMediaPublishSchedule
+                ::where('announcement_id', $announcement_id)
+                ->where('online_media_id', $medium->id)
+                ->where('sequence', '>=', $sequence_pointer)
+                ->delete();
         }
 
         return;
