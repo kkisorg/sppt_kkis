@@ -59,6 +59,8 @@ Route::get('/announcement/create/{announcement_request_id}', 'AnnouncementContro
 Route::post('/announcement/insert', 'AnnouncementController@insert');
 Route::get('/announcement/edit/{announcement_request_id}', 'AnnouncementController@edit');
 Route::post('/announcement/update', 'AnnouncementController@update');
+Route::get('/announcement/edit_distribution_schedule/{announcement_id}', 'AnnouncementController@edit_distribution_schedule');
+Route::post('/announcement/update_distribution_schedule', 'AnnouncementController@update_distribution_schedule');
 Route::get('/announcement/view/{announcement_id}', 'AnnouncementController@view');
 Route::get('/announcement/delete/{announcement_id}', 'AnnouncementController@delete');
 Route::get('/view_announcement', 'AnnouncementController@view_all');

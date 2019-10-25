@@ -54,6 +54,7 @@
                     <td>
                         <div class="list-group">
                             <a class="list-group-item list-group-item-info" href="/announcement/view/{{ $announcement->id }}"> Lihat </a>
+                            <a class="list-group-item list-group-item-success" href="/announcement/edit_distribution_schedule/{{ $announcement->id }}"> Atur Jadwal Edar </a>
                             <a class="list-group-item list-group-item-warning" href="/announcement/edit/{{ $announcement->announcement_request_id }}"> Ubah </a>
                             <a class="list-group-item list-group-item-danger" href="/announcement/delete/{{ $announcement->id }}" onclick="return confirm('Apakah Anda yakin menghapus pengumuman ini?\nPenghapusan ini tidak dapat dibatalkan.');"> Hapus </a>
                         </div>
