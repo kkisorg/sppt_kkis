@@ -80,11 +80,11 @@ trait AnnouncementOnlineMediaPublishScheduler
             // Get the content of the annoucement specific to the medium.
             $content = $announcement->media()->where('id', $medium->id)->first()->pivot->content;
 
-            // Find sequence number, the published announcement will not be updated.
+            // Find sequence number, the non-initial announcement will not be updated.
             $published_count = AnnouncementOnlineMediaPublishSchedule
                 ::where('announcement_id', $announcement_id)
                 ->where('online_media_id', $medium->id)
-                ->where('status', 'PUBLISHED')
+                ->where('status', '!=', 'INITIAL')
                 ->max('sequence');
             if ($published_count === null) {
                 $next_published_sequence = 1;
