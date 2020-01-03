@@ -14,7 +14,7 @@ class AddRecipientEmailToOfflineDistributionTable extends Migration
     public function up()
     {
         Schema::table('offline_distribution', function (Blueprint $table) {
-            $table->string('recipient_email', 500)->after('deadline_timestamp');
+            $table->string('recipient_email', 500)->after('deadline_timestamp')->default('');
         });
     }
 
