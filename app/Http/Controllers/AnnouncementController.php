@@ -366,6 +366,7 @@ class AnnouncementController extends Controller
         // Update the online media publish schedule
         // which were set automatically by system.
         foreach ($online_media as $medium) {
+            $title = $announcement->title;
             // Get the content of the annoucement specific to the medium.
             $content = $announcement->media()->where('id', $medium->id)->first()->pivot->content;
             for ($sequence = 1; $sequence <= 3; $sequence++) {
@@ -379,6 +380,7 @@ class AnnouncementController extends Controller
                         'online_media_id' => $medium->id,
                         'sequence' => $sequence
                     ], [
+                        'title' => $title,
                         'content' => $content,
                         'status' => 'INITIAL',
                         'publish_timestamp' => $publish_timestamp

@@ -31,6 +31,10 @@ class Kernel extends ConsoleKernel
         $schedule
             ->call('App\Http\Controllers\MonthlyOfflineDistributionScheduleController@run')
             ->weeklyOn(1, '3:00');
+
+        $schedule
+            ->call('App\Http\Controllers\AnnouncementOnlineMediaPublishScheduleController@run')
+            ->everyMinute();
     }
 
     /**
