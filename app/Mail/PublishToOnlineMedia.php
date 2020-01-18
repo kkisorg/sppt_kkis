@@ -42,6 +42,13 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
      */
     protected $mention_app_name_in_body;
 
+   /**
+    * The array of image_path.
+    *
+    * @var array
+    */
+    protected $image_path_array;
+
     /**
      * Create a new message instance.
      *
@@ -56,41 +63,29 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         $this->mention_app_name_in_subject = $mention_app_name_in_subject;
         $this->mention_media_name_in_subject = $mention_media_name_in_subject;
         $this->mention_app_name_in_body = $mention_app_name_in_body;
+        $this->image_path_array = array();
 
     }
 
     /**
-     * Encode image into base64
+     * Extract image URL to an array and then remove the <img> tag.
      *
      * @param string $str
      * @return string
      */
-    public function convert_image(string $str)
+    public function extract_and_remove_image_path(string $str)
     {
-        return preg_replace_callback(
-            '/(<img src=")(.*?)(")/',
-            function ($matches) {
-                $path = $matches[2];
-                $file_extension = pathinfo($path, PATHINFO_EXTENSION);
+        // Extract all image URL.
+        preg_match_all('/(<img src=")(.*?)(")/', $str, $tmp_image_path_array);
+        foreach ($tmp_image_path_array[2] as $image_path) {
+            if (substr($image_path, 0, strlen('/storage/')) == '/storage/') {
+                $image_path = substr($image_path, strlen('/storage/'));
+            }
+            array_push($this->image_path_array, storage_path('app/public/'.$image_path));
+        }
 
-                $supported_extension = array('tiff', 'tif', 'jpeg', 'jpg', 'gif', 'png');
-                if (!in_array($file_extension, $supported_extension)) {
-                    return $matches[1].$matches[2].$matches[3];
-                }
-
-                // According to the documentation, the URL is retrieved by
-                // prepending "/storage" to the given path; so to reverse it,
-                // "/storage" is trimmed.
-                // Documentation: https://laravel.com/docs/5.6/filesystem#file-urls
-                if (substr($path, 0, strlen('/storage/')) == '/storage/') {
-                    $path = substr($path, strlen('/storage/'));
-                }
-                $data = file_get_contents(storage_path('app/public/'.$path));
-                $base64 = 'data:image/'.$file_extension.';base64,'.base64_encode($data);
-                return $matches[1].$base64.$matches[3];
-            },
-            $str
-        );
+        // Delete img tag from the string.
+        return preg_replace('/<figure class="image"><img[^>]+?\><\/figure>/i', '', $str);;
     }
 
     /**
@@ -102,6 +97,7 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
     {
         $media_name = $this->publish_schedule->media->name;
 
+        // Extract subject.
         $subject = '';
         if ($this->mention_app_name_in_subject) {
             $subject .= '['.config('app.name').'] ';
@@ -111,12 +107,21 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         }
         $subject .= $this->publish_schedule->title;
 
-        return $this
+        // Extract attachment (URL to attachments) and remove URL from content.
+        $content = $this->extract_and_remove_image_path($this->publish_schedule->content);
+
+        $email = $this
             ->subject($subject)
             ->view('announcement.distribution_schedule.publish.email')
             ->with([
-                'content' => $this->convert_image($this->publish_schedule->content),
+                'content' => $content,
                 'mention_app_name_in_body' => $this->mention_app_name_in_body
             ]);
+
+        foreach ($this->image_path_array as $image_path) {
+            $email->attach($image_path);
+        }
+
+        return $email;
     }
 }
