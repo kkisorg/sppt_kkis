@@ -77,6 +77,7 @@ trait AnnouncementOnlineMediaPublishScheduler
 
         // Create or update the publish schedule in the online media.
         foreach ($online_media as $medium) {
+            $title = $announcement->title;
             // Get the content of the annoucement specific to the medium.
             $content = $announcement->media()->where('id', $medium->id)->first()->pivot->content;
 
@@ -106,6 +107,7 @@ trait AnnouncementOnlineMediaPublishScheduler
                     'online_media_id' => $medium->id,
                     'sequence' => $sequence_pointer
                 ], [
+                    'title' => $title,
                     'content' => $content,
                     'status' => 'INITIAL',
                     'publish_timestamp' => $publish_times[$publish_pointer]->timestamp
