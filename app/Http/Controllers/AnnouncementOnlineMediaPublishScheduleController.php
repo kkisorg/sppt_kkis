@@ -7,9 +7,11 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 use App\Announcement;
 use App\AnnouncementOnlineMediaPublishSchedule;
+use App\AnnouncementOnlineMediaPublishRecord;
 use App\Media;
 use App\User;
 use App\Mail\PublishToOnlineMedia;
@@ -60,6 +62,22 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                 switch ($media_name_lower) {
                     case 'website':
                         // Send email to the website mailbox.
+
+                        $request_parameter = array(
+                            'announcement_online_media_publish_schedule_id' => $schedule->id,
+                            'announcement_online_media_publish_schedule' => $schedule->toJson(),
+                            'mention_media_name_in_subject' => false,
+                            'mention_app_name_in_subject' => false,
+                            'mention_app_name_in_body' => false,
+                            'to' => array(env('WEBSITE_MAILBOX_EMAIL')),
+                            'bcc' => array(config('mail.from.address'))
+                        );
+                        $record = AnnouncementOnlineMediaPublishRecord::create([
+                            'announcement_online_media_publish_schedule_id' => $schedule->id,
+                            'request_parameter' => json_encode($request_parameter),
+                            'status' => 'ON_PROGRESS'
+                        ]);
+
                         Mail::to(env('WEBSITE_MAILBOX_EMAIL'))
                             ->bcc(config('mail.from.address'))
                             ->send(new PublishToOnlineMedia(
@@ -71,6 +89,21 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $admin_email_array = User::where('is_admin', true)
                                                 ->pluck('email')->toArray();
 
+                        $request_parameter = array(
+                            'announcement_online_media_publish_schedule_id' => $schedule->id,
+                            'announcement_online_media_publish_schedule' => $schedule->toJson(),
+                            'mention_media_name_in_subject' => true,
+                            'mention_app_name_in_subject' => true,
+                            'mention_app_name_in_body' => true,
+                            'to' => $admin_email_array,
+                            'bcc' => array(config('mail.from.address'))
+                        );
+                        $record = AnnouncementOnlineMediaPublishRecord::create([
+                            'announcement_online_media_publish_schedule_id' => $schedule->id,
+                            'request_parameter' => json_encode($request_parameter),
+                            'status' => 'ON_PROGRESS'
+                        ]);
+
                         Mail::to($admin_email_array)
                             ->bcc(config('mail.from.address'))
                             ->send(new PublishToOnlineMedia($schedule));
@@ -78,16 +111,27 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                 }
             } catch (Exception $e) {
                 // If not success, mark as failed.
+                Log::error($e);
                 $schedule->update(['status' => 'FAILED']);
+                $record->update([
+                    'status' => 'FAILED',
+                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
+                ]);
                 continue;
             } catch (\Exception $e) {
                 // If not success, mark as failed.
+                Log::error($e);
                 $schedule->update(['status' => 'FAILED']);
+                $record->update([
+                    'status' => 'FAILED',
+                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
+                ]);
                 continue;
             }
 
             // Finally, mark as success.
             $schedule->update(['status' => 'SUCCESS']);
+            $record->update(['status' => 'SUCCESS']);
         }
     }
 }
