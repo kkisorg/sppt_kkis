@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Log;
 
 use App\Announcement;
 use App\AnnouncementOnlineMediaPublishSchedule;
@@ -47,7 +46,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
             $schedules = $schedules->where('status', 'INITIAL');
         } else {
             // First attempt and re-attempt of the failed ones.
-            $schedules = $schedules->whereIn('status', ['INITIAL', 'FAILED']);
+            $schedules = $schedules->where('status', '!=', 'SUCCESS');
         }
         $schedules = $schedules->get();
         foreach ($schedules as $schedule) {
@@ -111,7 +110,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                 }
             } catch (Exception $e) {
                 // If not success, mark as failed.
-                Log::error($e);
                 $schedule->update(['status' => 'FAILED']);
                 $record->update([
                     'status' => 'FAILED',
@@ -120,7 +118,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                 continue;
             } catch (\Exception $e) {
                 // If not success, mark as failed.
-                Log::error($e);
                 $schedule->update(['status' => 'FAILED']);
                 $record->update([
                     'status' => 'FAILED',
