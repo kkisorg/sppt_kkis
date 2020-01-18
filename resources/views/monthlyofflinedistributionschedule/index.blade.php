@@ -27,6 +27,17 @@
 </style>
 @endsection
 
+@section('extra_js')
+<script>
+    $(document).ready(function() {
+        $('#datetimepicker').datetimepicker({
+            sideBySide: true,
+            useStrict: true,
+        });
+    });
+</script>
+@endsection
+
 @section('content')
     @include('layout.message')
     <div class="row">
@@ -65,5 +76,32 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
+    <hr>
+    <div class="row">
+        <h3><b>Eksekusi Jadwal Distribusi Bulanan Secara Manual (Execute Task Manually)</b></h3>
+    </div>
+    <div class="row">
+        <div class="col xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <form action="/monthly_offline_distribution_schedule/manual_invoke" role="form" method="POST" class="form-vertical">
+                    {{ csrf_field() }}
+                    <div class="panel-body">
+                        <div class="row form-group center-block">
+                            <label> Waktu (waktu Anda seolah-olah sedang menjalankan task ini): </label>
+                            <div class='input-group date' id='datetimepicker'>
+                                <input type='text' class="form-control" name="datetime" id="datetime" required>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row form-group center-block">
+                            <button type="submit" class="btn btn-default"> Jalankan </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection

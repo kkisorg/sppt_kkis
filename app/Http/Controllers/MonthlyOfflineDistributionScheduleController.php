@@ -237,9 +237,35 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      *
      * @return void
      */
-    public function run()
+    public function __invoke()
     {
-        $now = Carbon::now();
+        $timestamp = Carbon::now()->timestamp;
+        $this->run($timestamp);
+        return;
+    }
+
+    /**
+     * Run offline distribution insertion jobs manually
+     *
+     * @return void
+     */
+    public function manual_invoke(Request $request)
+    {
+        $datetime = $request->input('datetime');
+        $timestamp = Carbon::parse($datetime)->timestamp;
+        $this->run($timestamp);
+        return redirect('/monthly_offline_distribution_schedule', 303)
+            ->with('success_message', 'Jadwal distribusi offline bulanan telah berhasil dieksekusi.');
+    }
+
+    /**
+     * Execute offline distribution insertion jobs
+     *
+     * @return void
+     */
+    public function run(int $timestamp)
+    {
+        $now = Carbon::createFromTimestamp($timestamp);
         $current_weekofmonth = $now->weekOfMonth;
 
         // Special action for week 5
@@ -288,6 +314,15 @@ class MonthlyOfflineDistributionScheduleController extends Controller
 
                 // This case happen when there is no fifth week next month
                 if (Carbon::parse($distribution_date)->greaterThan(Carbon::createFromTimestamp(strtotime('last day of next month')))) {
+                    continue;
+                }
+
+                // Avoid duplication
+                $distribution_exists = OfflineDistribution
+                    ::where('offline_media_id', $schedule->offline_media_id)
+                    ->where('distribution_timestamp', $distribution_timestamp)
+                    ->exists();
+                if ($distribution_exists) {
                     continue;
                 }
 

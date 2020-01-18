@@ -86,3 +86,4 @@ Route::get('/monthly_offline_distribution_schedule/edit/{announcement_request_id
 Route::post('/monthly_offline_distribution_schedule/update', 'MonthlyOfflineDistributionScheduleController@update');
 Route::get('/monthly_offline_distribution_schedule/view/{announcement_request_id}', 'MonthlyOfflineDistributionScheduleController@view');
 Route::get('/monthly_offline_distribution_schedule/delete/{announcement_request_id}', 'MonthlyOfflineDistributionScheduleController@delete');
+Route::post('/monthly_offline_distribution_schedule/manual_invoke', 'MonthlyOfflineDistributionScheduleController@manual_invoke');
