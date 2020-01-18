@@ -14,8 +14,6 @@ use App\Media;
 use App\User;
 use App\Mail\PublishToOnlineMedia;
 
-use Illuminate\Support\Facades\Log;
-
 class AnnouncementOnlineMediaPublishScheduleController extends Controller
 {
     /**

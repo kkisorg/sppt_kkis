@@ -32,15 +32,37 @@ class ShareOfflineDistribution extends Mailable implements ShouldQueue
     }
 
     /**
-     * Convert image path so that it is accessible by public.
-     * Disclaimer: This is a hacky way.
+     * Encode image into base64
      *
      * @param string $str
      * @return string
      */
-    public function convert_image_path(string $str)
+    public function convert_image(string $str)
     {
-        return str_replace('<img src="', '<img src="'.URL::to('/'), $str);
+        return preg_replace_callback(
+            '/(<img src=")(.*?)(")/',
+            function ($matches) {
+                $path = $matches[2];
+                $file_extension = pathinfo($path, PATHINFO_EXTENSION);
+
+                $supported_extension = array('tiff', 'tif', 'jpeg', 'jpg', 'gif', 'png');
+                if (!in_array($file_extension, $supported_extension)) {
+                    return $matches[1].$matches[2].$matches[3];
+                }
+
+                // According to the documentation, the URL is retrieved by
+                // prepending "/storage" to the given path; so to reverse it,
+                // "/storage" is trimmed.
+                // Documentation: https://laravel.com/docs/5.6/filesystem#file-urls
+                if (substr($path, 0, strlen('/storage/')) == '/storage/') {
+                    $path = substr($path, strlen('/storage/'));
+                }
+                $data = file_get_contents(storage_path('app/public/'.$path));
+                $base64 = 'data:image/'.$file_extension.';base64,'.base64_encode($data);
+                return $matches[1].$base64.$matches[3];
+            },
+            $str
+        );
     }
 
     /**
@@ -54,9 +76,9 @@ class ShareOfflineDistribution extends Mailable implements ShouldQueue
             ->subject('['.config('app.name').'] '. $this->offline_distribution->name)
             ->view('offlinedistribution.share.email')
             ->with([
-                'header' => $this->convert_image_path($this->offline_distribution->header),
-                'content' => $this->convert_image_path($this->offline_distribution->content),
-                'footer' => $this->convert_image_path($this->offline_distribution->footer),
+                'header' => $this->convert_image($this->offline_distribution->header),
+                'content' => $this->convert_image($this->offline_distribution->content),
+                'footer' => $this->convert_image($this->offline_distribution->footer),
             ]);
     }
 }
