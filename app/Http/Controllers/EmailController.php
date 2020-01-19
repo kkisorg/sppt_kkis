@@ -68,8 +68,7 @@ class EmailController extends Controller
 
             $record = EmailSendRecord::create([
                 'email_send_schedule_id' => $schedule->id,
-                'request_parameter' => $schedule->request_parameter,
-                'status' => 'ON_PROGRESS'
+                'request_parameter' => $schedule->request_parameter
             ]);
             $request_parameter = json_decode($schedule->request_parameter, true);
 

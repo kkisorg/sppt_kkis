@@ -46,6 +46,15 @@ class EmailSendSchedule extends Model
     const UPDATED_AT = 'update_timestamp';
 
     /**
+     * The default value of some attributes.
+     *
+     * @var string
+     */
+    protected $attributes = array(
+       'status' => 'INITIAL'
+    );
+
+    /**
      * Get the announcement associated with the online media publish schedule.
      */
     public function email_send_record()
