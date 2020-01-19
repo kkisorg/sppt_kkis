@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 use App\Announcement;
+use App\EmailSendSchedule;
 use App\Media;
 use App\OfflineDistribution;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
-use App\Mail\ShareOfflineDistribution;
 
 class OfflineDistributionController extends Controller
 {
@@ -349,9 +349,17 @@ class OfflineDistributionController extends Controller
 
         $recipient_email_array = explode(",", $recipient_email);
 
-        Mail::to($recipient_email_array)
-            ->bcc(config('mail.from.address'))
-            ->send(new ShareOfflineDistribution($offline_distribution));
+        // Prepare parameter for email and create schedule accordingly.
+        $email_parameter = array(
+            'to' => $recipient_email_array,
+            'offline_distribution' => $offline_distribution->toJson(),
+            'offline_distribution_id' => $offline_distribution_id,
+        );
+        EmailSendSchedule::create([
+            'email_class' => 'ShareOfflineDistribution',
+            'request_parameter' => json_encode($email_parameter),
+            'send_timestamp' => Carbon::now()->timestamp
+        ]);
 
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Distribusi telah berhasil dibagikan ke '.$recipient_email);

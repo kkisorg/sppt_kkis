@@ -71,6 +71,9 @@ class EmailController extends Controller
                 'request_parameter' => $schedule->request_parameter
             ]);
             $request_parameter = json_decode($schedule->request_parameter, true);
+            // Always bcc
+            $request_parameter['bcc'] = array(config('mail.from.address'));
+
 
             try {
                 switch ($schedule->email_class) {
@@ -78,8 +81,6 @@ class EmailController extends Controller
                         $user_id = $request_parameter['user_id'];
                         $user = User::findOrFail($user_id);
                         $request_parameter['user'] = $user->toJson();
-                        $request_parameter['to'] = array($user->email);
-                        $request_parameter['bcc'] = array(config('mail.from.address'));
 
                         $record->update(['request_parameter' => json_encode($request_parameter)]);
 
@@ -92,8 +93,6 @@ class EmailController extends Controller
                         $user_id = $request_parameter['user_id'];
                         $user = User::findOrFail($user_id);
                         $request_parameter['user'] = $user->toJson();
-                        $request_parameter['to'] = array($user->email);
-                        $request_parameter['bcc'] = array(config('mail.from.address'));
 
                         $record->update(['request_parameter' => json_encode($request_parameter)]);
 
@@ -106,8 +105,6 @@ class EmailController extends Controller
                         $user_id = $request_parameter['user_id'];
                         $user = User::findOrFail($user_id);
                         $request_parameter['user'] = $user->toJson();
-                        $request_parameter['to'] = array($user->email);
-                        $request_parameter['bcc'] = array(config('mail.from.address'));
 
                         $record->update(['request_parameter' => json_encode($request_parameter)]);
 
@@ -120,8 +117,6 @@ class EmailController extends Controller
                         $offline_distribution_id = $request_parameter['offline_distribution_id'];
                         $offline_distribution = OfflineDistribution::findOrFail($offline_distribution_id);
                         $request_parameter['offline_distribution'] = $offline_distribution->toJson();
-                        $request_parameter['to'] = explode(',', $offline_distribution->recipient_email);
-                        $request_parameter['bcc'] = array(config('mail.from.address'));
 
                         $record->update(['request_parameter' => json_encode($request_parameter)]);
 

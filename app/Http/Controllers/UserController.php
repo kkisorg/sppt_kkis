@@ -9,11 +9,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
 use App\AccountActivation;
+use App\EmailSendSchedule;
 use App\User;
 use App\PasswordReset;
-use App\Mail\ActivateAccount;
-use App\Mail\PasswordChanged;
-use App\Mail\ResetPassword;
 
 class UserController extends Controller
 {
@@ -126,9 +124,19 @@ class UserController extends Controller
                 'user_id' => $user->id,
                 'token' => $token
             ]);
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new ActivateAccount($user, $token));
+
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+                'token' => $token
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'ActivateAccount',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
 
             return redirect('/login', 303)->with(
                 'success_message',
@@ -247,9 +255,18 @@ class UserController extends Controller
                 'password' => $new_password_hashed
             ]);
             // Send email to user for acknowledgement
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new PasswordChanged($user));
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'PasswordChanged',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
+
             // Logout
             Auth::logout();
             return redirect('/login', 303)
@@ -290,10 +307,21 @@ class UserController extends Controller
         $user = User::where('email', $email)->first();
         if ($user) {
             $create_time = $password_reset->create_timestamp->toDateTimeString();
+
             // Send email to user for follow up
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new ResetPassword($user, $token, $create_time));
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+                'token' => $token,
+                'create_time' => $create_time
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'ResetPassword',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
         }
         return redirect('/login', 303)
             ->with('success_message',
@@ -351,9 +379,17 @@ class UserController extends Controller
         ]);
 
         // Send email to user for acknowledgement
-        Mail::to($user)
-            ->bcc(config('mail.from.address'))
-            ->send(new PasswordChanged($user));
+        // Prepare parameter for email and create schedule accordingly.
+        $email_parameter = array(
+            'to' => array($user->email),
+            'user' => $user->toJson(),
+            'user_id' => $user->id,
+        );
+        EmailSendSchedule::create([
+            'email_class' => 'PasswordChanged',
+            'request_parameter' => json_encode($email_parameter),
+            'send_timestamp' => Carbon::now()->timestamp
+        ]);
 
         // Logout
         Auth::logout();
