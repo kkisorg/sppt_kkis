@@ -73,8 +73,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         );
                         $record = AnnouncementOnlineMediaPublishRecord::create([
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
-                            'request_parameter' => json_encode($request_parameter),
-                            'status' => 'ON_PROGRESS'
+                            'request_parameter' => json_encode($request_parameter)
                         ]);
 
                         Mail::to(env('WEBSITE_MAILBOX_EMAIL'))
@@ -99,8 +98,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         );
                         $record = AnnouncementOnlineMediaPublishRecord::create([
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
-                            'request_parameter' => json_encode($request_parameter),
-                            'status' => 'ON_PROGRESS'
+                            'request_parameter' => json_encode($request_parameter)
                         ]);
 
                         Mail::to($admin_email_array)
