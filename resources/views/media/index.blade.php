@@ -41,9 +41,9 @@
                     <tr>
                         <th name="no-col"> No.</th>
                         <th name="title-col"> Nama </th>
-                        <th name="title-col"> Jenis </th>
-                        <th name="text-col"> Teks </th>
-                        <th name="image-col"> Gambar/Flyer </th>
+                        <th name="title-col" class="hidden-xs"> Jenis </th>
+                        <th name="text-col" class="hidden-xs"> Teks </th>
+                        <th name="image-col" class="hidden-xs"> Gambar/Flyer </th>
                         <th name="is-active-col"> Aktif </th>
                         <th name="manage-col"> Kelola </th>
                     </tr>
@@ -53,16 +53,16 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $medium->name }}</td>
-                        <td>
+                        <td class="hidden-xs">
                             @if ($medium->is_online) ONLINE
                             @else OFFLINE @endif
                         </td>
-                        <td>
+                        <td class="hidden-xs">
                             @if ($medium->text === 'REQUIRED') WAJIB
                             @elseif ($medium->text === 'OPTIONAL') OPSIONAL
                             @else TIDAK ADA @endif
                         </td>
-                        <td>
+                        <td class="hidden-xs">
                             @if ($medium->image === 'REQUIRED') WAJIB
                             @elseif ($medium->image === 'OPTIONAL') OPSIONAL
                             @else TIDAK ADA @endif

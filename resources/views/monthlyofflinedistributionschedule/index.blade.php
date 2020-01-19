@@ -53,7 +53,7 @@
                     <th name="no-col"> No.</th>
                     <th name="escription-col"> Deskripsi </th>
                     <th name="datetime-col"> Waktu Distribusi </th>
-                    <th name="deadline-col"> Batas Waktu (Deadline) </th>
+                    <th name="deadline-col" class="hidden-xs"> Batas Waktu (Deadline) </th>
                     <th name="media-col"> Jenis Media </th>
                     <th name="manage-col"> Kelola </th>
                 </tr>
@@ -64,7 +64,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $schedule->name }}</td>
                     <td>Minggu ke-{{ $schedule->distribution_weekofmonth }}, hari {{ $schedule->distribution_dayofweek }}, pukul {{ $schedule->distribution_time }} </td>
-                    <td>Hari {{ $schedule->deadline_dayofweek }}, pukul {{ $schedule->deadline_time }} </td>
+                    <td class="hidden-xs">Hari {{ $schedule->deadline_dayofweek }}, pukul {{ $schedule->deadline_time }} </td>
                     <td>{{ $schedule->media_name }}</td>
                     <td>
                         <div class="list-group">

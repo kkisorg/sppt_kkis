@@ -41,9 +41,9 @@
                 <tr>
                     <th name="no-col"> No.</th>
                     <th name="description-col"> Deskripsi </th>
-                    <th name="datetime-col"> Waktu </th>
+                    <th name="datetime-col" class="hidden-xs"> Waktu </th>
                     <th name="content-col"> Isi Pengumuman </th>
-                    <th name="media-col"> Jenis Media </th>
+                    <th name="media-col" class="hidden-xs"> Jenis Media </th>
                     <th name="manage-col"> Kelola </th>
                 </tr>
             </thead>
@@ -52,9 +52,9 @@
                 <tr>
                     <td rowspan="3">{{ $loop->iteration }}</td>
                     <td rowspan="3">{{ $distribution->name }}</td>
-                    <td><b>Waktu Distribusi: </b><br>{{ $distribution->distribution_datetime }}</td>
+                    <td class="hidden-xs"><b>Waktu Distribusi: </b><br>{{ $distribution->distribution_datetime }}</td>
                     <td rowspan="2">{{ $distribution->announcement_titles }}</td>
-                    <td rowspan="3">{{ $distribution->media_name }}</td>
+                    <td class="hidden-xs" rowspan="3">{{ $distribution->media_name }}</td>
                     <td rowspan="3">
                         <div class="list-group">
                             <a class="list-group-item list-group-item-info" href="/offline_distribution/view/{{ $distribution->id }}"> Lihat </a>
@@ -67,7 +67,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><b>Batas Waktu (Deadline): </b><br>{{ $distribution->deadline_datetime }}</td>
+                    <td class="hidden-xs"><b>Batas Waktu (Deadline): </b><br>{{ $distribution->deadline_datetime }}</td>
                 </tr>
                 <tr>
                     <td class="hidden-xs">
