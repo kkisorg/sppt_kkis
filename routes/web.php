@@ -92,3 +92,8 @@ Route::post('/monthly_offline_distribution_schedule/manual_invoke', 'MonthlyOffl
 Route::get('/email_send_schedule', 'EmailController@index');
 Route::get('/email_send_schedule/view/{email_send_schedule_id}', 'EmailController@view');
 Route::get('/email_send_schedule/manual_invoke/{email_send_schedule_id}', 'EmailController@manual_invoke');
+
+// Announcement Online Media Publish Schedule Controller
+Route::get('/announcement_online_media_publish_schedule', 'AnnouncementOnlineMediaPublishScheduleController@index');
+Route::get('/announcement_online_media_publish_schedule/view/{schedule_id}', 'AnnouncementOnlineMediaPublishScheduleController@view');
+Route::get('/announcement_online_media_publish_schedule/manual_invoke/{schedule_id}', 'AnnouncementOnlineMediaPublishScheduleController@manual_invoke');

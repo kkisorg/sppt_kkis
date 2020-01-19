@@ -55,10 +55,18 @@ class AnnouncementOnlineMediaPublishRecord extends Model
     );
 
     /**
-     * Get the announcement associated with the online media publish schedule.
+     * Get the announcement online media publish schedule associated with the online media publish record.
      */
     public function announcement_online_media_publish_schedule()
     {
         return $this->belongsTo('App\AnnouncementOnlineMediaPublishSchedule');
+    }
+
+    /**
+     * Get the user associated with the online media publish record.
+     */
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'creator_id');
     }
 }

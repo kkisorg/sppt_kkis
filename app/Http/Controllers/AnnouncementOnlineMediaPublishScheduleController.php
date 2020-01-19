@@ -28,14 +28,76 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
     }
 
     /**
-     * Run online media publication jobs automatically.
+     * Display the list of announcement online media publish schedule
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+        $schedules = AnnouncementOnlineMediaPublishSchedule::orderBy('publish_timestamp', 'desc')->get();
+        foreach ($schedules as $schedule) {
+            $schedule->publish_datetime =
+                Carbon::createFromTimestamp($schedule->publish_timestamp)->format('l, j F Y, g:i a');
+        }
+        return view('announcementonlinemediapublishschedule.index', ['announcement_online_media_publish_schedules' => $schedules]);
+    }
+
+    /**
+     * Display the view publish schedule page
+     *
+     * @param Request $request
+     * @param string $schedule_id
+     * @return Response
+     */
+    public function view(Request $request, string $schedule_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $schedule = AnnouncementOnlineMediaPublishSchedule::findOrFail($schedule_id);
+
+        // Convert some schedule details into the frontend format
+        $schedule->publish_datetime =
+            Carbon::createFromTimestamp($schedule->publish_timestamp)->format('l, j F Y, g:i a');
+
+        // Retrieve the records
+        $records = $schedule
+            ->announcement_online_media_publish_record()
+            ->orderBy('create_timestamp')
+            ->get();
+        foreach ($records as $record) {
+            $record->request_parameter =
+                json_encode(json_decode($record->request_parameter), JSON_PRETTY_PRINT);
+            $record->response_content =
+                json_encode(json_decode($record->response_content), JSON_PRETTY_PRINT);
+            $record->create_datetime = $record->create_timestamp->format('l, j F Y, g:i a');
+        }
+
+        return view('announcementonlinemediapublishschedule.view', [
+            'schedule' => $schedule,
+            'records' => $records
+        ]);
+    }
+
+    /**
+     * Run publish jobs automatically.
      *
      * Publish schedule with status = 'INITIAL' will be attempted immediately.
      * Publish schedule with status = 'FAILED' will be reattempted every hour.
      *
      * @return void
      */
-    public function run() {
+    public function __invoke()
+    {
         $now = Carbon::now();
         $current_timestamp = $now->timestamp;
 
@@ -48,7 +110,39 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
             // First attempt and re-attempt of the failed ones.
             $schedules = $schedules->where('status', '!=', 'SUCCESS');
         }
-        $schedules = $schedules->get();
+        $schedule_ids = $schedules->pluck('id')->toArray();
+        $this->run($schedule_ids);
+        return;
+    }
+
+    /**
+     * Run publish jobs manually.
+     *
+     * @return void
+     */
+    public function manual_invoke(Request $request, string $schedule_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $this->run(array($schedule_id), true);
+        return back(303)->with('success_message', 'Task publikasi ke media online telah berhasil dieksekusi.');
+    }
+
+    /**
+     * Run online media publication jobs.
+     *
+     * @return void
+     */
+    private function run(array $announcement_online_media_publish_schedule_id, bool $is_manual = false)
+    {
+        $schedules = AnnouncementOnlineMediaPublishSchedule
+            ::whereIn('id', $announcement_online_media_publish_schedule_id)
+            ->get();
+
         foreach ($schedules as $schedule) {
             // First, mark as ongoing
             $schedule->update(['status' => 'ON_PROGRESS']);
@@ -56,6 +150,13 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
             $media = $schedule->media;
             $media_name = $media->name;
             $media_name_lower = strtolower($media_name);
+
+            $record = AnnouncementOnlineMediaPublishRecord::create([
+                'announcement_online_media_publish_schedule_id' => $schedule->id,
+                'request_parameter' => '',
+                'is_manual' => $is_manual,
+                'creator_id' => $is_manual ? Auth::id() : null
+            ]);
 
             try {
                 switch ($media_name_lower) {
@@ -71,10 +172,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                             'to' => array(env('WEBSITE_MAILBOX_EMAIL')),
                             'bcc' => array(config('mail.from.address'))
                         );
-                        $record = AnnouncementOnlineMediaPublishRecord::create([
-                            'announcement_online_media_publish_schedule_id' => $schedule->id,
-                            'request_parameter' => json_encode($request_parameter)
-                        ]);
+                        $record->update(['request_parameter' => json_encode($request_parameter)]);
 
                         Mail::to(env('WEBSITE_MAILBOX_EMAIL'))
                             ->bcc(config('mail.from.address'))
@@ -96,10 +194,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                             'to' => $admin_email_array,
                             'bcc' => array(config('mail.from.address'))
                         );
-                        $record = AnnouncementOnlineMediaPublishRecord::create([
-                            'announcement_online_media_publish_schedule_id' => $schedule->id,
-                            'request_parameter' => json_encode($request_parameter)
-                        ]);
+                        $record->update(['request_parameter' => json_encode($request_parameter)]);
 
                         Mail::to($admin_email_array)
                             ->bcc(config('mail.from.address'))

@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+use App\Http\Controllers\AnnouncementOnlineMediaPublishScheduleController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MonthlyOfflineDistributionScheduleController;
 
@@ -42,7 +43,7 @@ class Kernel extends ConsoleKernel
 
         // Publish announcement to online media
         $schedule
-            ->call('App\Http\Controllers\AnnouncementOnlineMediaPublishScheduleController@run')
+            ->call(new AnnouncementOnlineMediaPublishScheduleController)
             ->everyMinute();
     }
 
