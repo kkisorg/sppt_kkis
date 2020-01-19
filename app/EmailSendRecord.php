@@ -55,10 +55,19 @@ class EmailSendRecord extends Model
     );
 
     /**
-     * Get the announcement associated with the online media publish schedule.
+     * Get the email send schedule associated with the email send record.
      */
     public function email_send_schedule()
     {
         return $this->belongsTo('App\EmailSendSchedule');
     }
+
+    /**
+     * Get the user associated with the email send record.
+     */
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'creator_id');
+    }
+
 }

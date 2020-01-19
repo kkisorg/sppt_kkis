@@ -30,6 +30,7 @@
                                 <h4 class="panel-title">
                                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#record-list" href="#collapse{{ $loop->iteration }}" aria-expanded="false" aria-controls="collapse{{ $loop->iteration }}">
                                         Percobaan Kirim {{ $loop->iteration }} ({{ $record->create_datetime }})
+                                        @if ($record->is_manual) (Dijalankan manual oleh {{ $record->creator->name }}) @endif
                                         @if (@$record->status === 'FAILED')
                                         <span class="label label-danger">
                                         @elseif (@$record->status === 'SUCCESS')

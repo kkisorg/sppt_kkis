@@ -118,7 +118,7 @@ class EmailController extends Controller
             abort(403);
         }
 
-        $this->run($email_send_schedule_id);
+        $this->run($email_send_schedule_id, true);
         return back(303)->with('success_message', 'Task pengiriman email telah berhasil dieksekusi.');
     }
 
@@ -127,7 +127,7 @@ class EmailController extends Controller
      *
      * @return void
      */
-    private function run(string $email_send_schedule_id = null)
+    private function run(string $email_send_schedule_id = null, bool $is_manual = false)
     {
         if ($email_send_schedule_id !== null) {
             $schedules = EmailSendSchedule
@@ -146,10 +146,16 @@ class EmailController extends Controller
             // First, mark as ongoing
             $schedule->update(['status' => 'ON_PROGRESS']);
 
-            $record = EmailSendRecord::create([
+            $email_send_record_array = array(
                 'email_send_schedule_id' => $schedule->id,
                 'request_parameter' => $schedule->request_parameter
-            ]);
+            );
+            if ($is_manual) {
+                $email_send_record_array['is_manual'] = $is_manual;
+                $email_send_record_array['creator_id'] = Auth::id();
+            }
+            $record = EmailSendRecord::create($email_send_record_array);
+
             $request_parameter = json_decode($schedule->request_parameter, true);
             // Always bcc
             $request_parameter['bcc'] = array(config('mail.from.address'));
