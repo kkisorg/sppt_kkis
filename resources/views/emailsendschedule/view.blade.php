@@ -8,7 +8,7 @@
         <div class="col xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3><b>Lihat Pengumuman</b></h3>
+                    <h3><b>Lihat Jadwal Pengiriman Email</b></h3>
                 </div>
                 <div class="panel-body">
                     <div><h4><b>Email Class: </b></h4></div>

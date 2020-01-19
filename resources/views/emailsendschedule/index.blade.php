@@ -30,10 +30,10 @@
 @section('content')
     @include('layout.message')
     <div class="row">
-        <h3><b>Jadwal Jadwal Pengiriman Email</b></h3>
+        <h3><b> Daftar Jadwal Pengiriman Email</b></h3>
     </div>
     <div class="row">
-        <table id="monthly-offline-distribution-schedule-table" class="table table-striped table-bordered table-hover">
+        <table id="email-send-schedule-table" class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th name="no-col"> No.</th>
