@@ -27,17 +27,6 @@
 </style>
 @endsection
 
-@section('extra_js')
-<script>
-    $(document).ready(function() {
-        $('#datetimepicker').datetimepicker({
-            sideBySide: true,
-            useStrict: true,
-        });
-    });
-</script>
-@endsection
-
 @section('content')
     @include('layout.message')
     <div class="row">
