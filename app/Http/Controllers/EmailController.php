@@ -32,6 +32,69 @@ class EmailController extends Controller
     }
 
     /**
+     * Display the list of media
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+        $schedules = EmailSendSchedule::orderBy('send_timestamp', 'desc')->get();
+        foreach ($schedules as $schedule) {
+            $schedule->send_datetime =
+                Carbon::createFromTimestamp($schedule->send_timestamp)->format('l, j F Y, g:i a');
+            $schedule->request_parameter =
+                json_encode(json_decode($schedule->request_parameter), JSON_PRETTY_PRINT);
+        }
+        return view('emailsendschedule.index', ['email_send_schedules' => $schedules]);
+    }
+
+    /**
+     * Display the view email send schedule page
+     *
+     * @param Request $request
+     * @param string $announcement_id
+     * @return Response
+     */
+    public function view(Request $request, string $email_send_schedule_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $email_send_schedule = EmailSendSchedule::findOrFail($email_send_schedule_id);
+
+        // Convert some schedule details into the frontend format
+        $email_send_schedule->request_parameter =
+            json_encode(json_decode($email_send_schedule->request_parameter), JSON_PRETTY_PRINT);
+        $email_send_schedule->send_datetime =
+            Carbon::createFromTimestamp($email_send_schedule->send_timestamp)->format('l, j F Y, g:i a');
+
+        // Retrieve the records
+        $email_send_records = $email_send_schedule
+            ->email_send_record()
+            ->orderBy('create_timestamp')
+            ->get();
+        foreach ($email_send_records as $record) {
+            $record->request_parameter =
+                json_encode(json_decode($record->request_parameter), JSON_PRETTY_PRINT);
+            $record->create_datetime = $record->create_timestamp->format('l, j F Y, g:i a');
+        }
+
+        return view('emailsendschedule.view', [
+            'email_send_schedule' => $email_send_schedule,
+            'email_send_records' => $email_send_records
+        ]);
+    }
+
+    /**
      * Run email sending jobs automatically
      *
      * @return void
@@ -43,11 +106,28 @@ class EmailController extends Controller
     }
 
     /**
+     * Run email sending jobs manually
+     *
+     * @return void
+     */
+    public function manual_invoke(Request $request, string $email_send_schedule_id)
+    {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $this->run($email_send_schedule_id);
+        return back(303)->with('success_message', 'Task pengiriman email telah berhasil dieksekusi.');
+    }
+
+    /**
      * Execute email sending jobs
      *
      * @return void
      */
-    private function run(int $email_send_schedule_id = null)
+    private function run(string $email_send_schedule_id = null)
     {
         if ($email_send_schedule_id !== null) {
             $schedules = EmailSendSchedule
