@@ -251,6 +251,12 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function manual_invoke(Request $request)
     {
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
         $datetime = $request->input('datetime');
         $timestamp = Carbon::parse($datetime)->timestamp;
         $this->run($timestamp);
@@ -263,7 +269,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      *
      * @return void
      */
-    public function run(int $timestamp)
+    private function run(int $timestamp)
     {
         $now = Carbon::createFromTimestamp($timestamp);
         $current_weekofmonth = $now->weekOfMonth;
