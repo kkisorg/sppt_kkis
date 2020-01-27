@@ -194,11 +194,13 @@ class AnnouncementController extends Controller
         ]);
 
         // Attach the chosen media
-        foreach ($request->input('media') as $medium) {
-            $content = $request->input('content-'.$medium);
-            $media[$medium] = array('content' => $content);
+        if ($request->has('media')) {
+            foreach ($request->input('media') as $medium) {
+                $content = $request->input('content-'.$medium);
+                $media[$medium] = array('content' => $content);
+            }
+            $announcement->media()->attach($media);
         }
-        $announcement->media()->attach($media);
 
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
@@ -315,13 +317,18 @@ class AnnouncementController extends Controller
             'event_timestamp' => $event_timestamp,
         ]);
 
-        // Attach the chosen media and detach the unused ones
-        foreach ($request->input('media') as $medium) {
-            $content = $request->input('content-'.$medium);
-            $media[$medium] = array('content' => $content);
-        }
         $announcement = Announcement::findOrFail($announcement_id);
-        $announcement->media()->sync($media);
+
+        // Attach the chosen media and detach the unused ones
+        if ($request->has('media')) {
+            foreach ($request->input('media') as $medium) {
+                $content = $request->input('content-'.$medium);
+                $media[$medium] = array('content' => $content);
+            }
+            $announcement->media()->sync($media);
+        } else {
+            $announcement->media()->detach();
+        }
 
         // Sync offline distribution
         $this->sync_offline_distribution($announcement->id);
@@ -362,8 +369,15 @@ class AnnouncementController extends Controller
 
         $announcement = Announcement::findOrFail($announcement_id);
 
+        // List all the linked offline distribution
+        $announcement->offline_distribution_ids = $announcement
+            ->offline_distribution()->pluck('id')->toArray();
+        // List all offline distribution which media is ticked
+        $announcement_media_ids = $announcement
+            ->media()->pluck('id')->toArray();
         $present_offline_distributions = OfflineDistribution
             ::where('distribution_timestamp', '>', $now->timestamp)
+            ->whereIn('offline_media_id', $announcement_media_ids)
             ->orderBy('distribution_timestamp')
             ->get();
 
@@ -374,9 +388,6 @@ class AnnouncementController extends Controller
             ->where('is_active', True)
             ->get();
 
-        // List all the linked offline distribution
-        $announcement->offline_distribution_ids = $announcement
-            ->offline_distribution()->pluck('id')->toArray();
         // Populate the online media distribution schedule
         $online_media_publish_schedules_array = array();
         foreach($online_media as $medium) {
