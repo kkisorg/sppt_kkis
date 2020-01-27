@@ -79,6 +79,9 @@
     </head>
     <body>
         @include('layout.title')
+        @if(!isset($hide_menu))
+            @include('public.sidebarmenu')
+        @endif
         <div id="main" class="container">
             @yield('content')
         </div>

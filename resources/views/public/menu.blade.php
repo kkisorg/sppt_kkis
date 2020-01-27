@@ -1,4 +1,4 @@
-@extends('layout.base')
+@extends('layout.base', ['hide_menu' => true])
 
 @section('title', 'Menu Utama')
 
@@ -22,7 +22,7 @@
 @section('content')
     @include('layout.message')
     <div class="row">
-        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3><b>Menu User</b></h3>
@@ -81,7 +81,7 @@
             </div>
         </div>
         @if($user->is_admin)
-        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3><b>Menu Admin</b></h3>
@@ -111,7 +111,7 @@
                 </div>
             </div>
         </div>
-        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3><b>Menu Super Admin</b></h3>
