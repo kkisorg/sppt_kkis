@@ -30,7 +30,7 @@
 @section('content')
     @include('layout.message')
     <div class="row">
-        <h3><b>Jadwal Jadwal Pengiriman Email</b></h3>
+        <h3><b>Jadwal Pengiriman Email</b></h3>
     </div>
     <div class="row">
         <table id="announcement-online-media-publish-schedule-table" class="table table-striped table-bordered table-hover">
@@ -51,7 +51,7 @@
                     <td>{{ $schedule->media->name }}</td>
                     <td>
                         <h3><b> {{ $schedule->title }} </b></h3>
-                        {!! $schedule->content !!} 
+                        {!! $schedule->content !!}
                     </td>
                     <td> {{ $schedule->publish_datetime }} </td>
                     <td> @if (@$schedule->status === 'FAILED')
