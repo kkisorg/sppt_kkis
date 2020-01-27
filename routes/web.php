@@ -97,3 +97,9 @@ Route::get('/email_send_schedule/manual_invoke/{email_send_schedule_id}', 'Email
 Route::get('/announcement_online_media_publish_schedule', 'AnnouncementOnlineMediaPublishScheduleController@index');
 Route::get('/announcement_online_media_publish_schedule/view/{schedule_id}', 'AnnouncementOnlineMediaPublishScheduleController@view');
 Route::get('/announcement_online_media_publish_schedule/manual_invoke/{schedule_id}', 'AnnouncementOnlineMediaPublishScheduleController@manual_invoke');
+
+// Account management
+Route::get('/account_management', 'UserController@index');
+Route::get('/account_management/resend_activation_email/{user_id}', 'UserController@resend_activation_email');
+Route::get('/account_management/force_activate/{user_id}', 'UserController@force_activate');
+Route::get('/account_management/update_admin_role/{user_id}', 'UserController@update_admin_role');

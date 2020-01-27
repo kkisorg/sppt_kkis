@@ -62,6 +62,7 @@
     <a href="/announcement">Setujui (Approve) Pengumuman</a>
     <a href="/offline_distribution">Buat/Ubah/Hapus Distribusi Offline</a>
     <a href="/media">Buat/Ubah/Hapus Media</a>
+    <a href="/account_management">Kelola Akun User</a>
     <hr>
     <a href="/monthly_offline_distribution_schedule">Buat/Ubah/Hapus Jadwal Distribusi Offline Bulanan</a>
     <a href="/email_send_schedule">Lihat/Kelola Jadwal Pengiriman Email</a>

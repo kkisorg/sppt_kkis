@@ -108,6 +108,13 @@
                             </a>
                         </div>
                     </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/account_management">
+                                Kelola Akun User
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
