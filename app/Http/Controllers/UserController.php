@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Hash;
 
 use App\AccountActivation;
 use App\EmailSendSchedule;
-use App\User;
 use App\PasswordReset;
+use App\User;
+use App\UserActivityTracking;
 
 class UserController extends Controller
 {
@@ -33,10 +34,37 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'LOGIN',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // If user is authenticated, redirect to main menu
         if (Auth::check()) {
             return redirect('/', 303);
         }
+
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'LOGIN',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         return view('user.login');
     }
 
@@ -48,6 +76,19 @@ class UserController extends Controller
      */
     public function authenticate(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'AUTHENTICATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = strtolower($request->input('email'));
         $password = $request->input('password');
         $remember = $request->input('remember');
@@ -78,6 +119,19 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'LOGOUT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         Auth::logout();
         return redirect('/')->with('success_info', 'Logout berhasil.');
     }
@@ -90,6 +144,19 @@ class UserController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'REGISTER',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $name = $request->input('name');
         $mobile_number = $request->input('mobile-number');
         $organization_name = $request->input('organization-name');
@@ -153,6 +220,19 @@ class UserController extends Controller
      */
     public function activate(Request $request, string $token)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ACTIVATE_ACCOUNT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $account_activation = AccountActivation::where('token', $token)->first();
         if (!$account_activation) {
             return redirect('/login', 303)
@@ -178,6 +258,19 @@ class UserController extends Controller
      */
     public function edit_profile(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'EDIT_PROFILE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah profil.');
@@ -195,6 +288,19 @@ class UserController extends Controller
      */
     public function update_profile(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'EDIT_PROFILE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah profil.');
@@ -220,6 +326,19 @@ class UserController extends Controller
      */
     public function edit_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'EDIT_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah password.');
@@ -236,6 +355,19 @@ class UserController extends Controller
      */
     public function update_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'EDIT_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah password.');
@@ -282,6 +414,19 @@ class UserController extends Controller
      */
     public function forget_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'FORGET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (Auth::check()) {
             return redirect('/', 303);
         }
@@ -296,6 +441,19 @@ class UserController extends Controller
      */
     public function insert_password_reset(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'FORGET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = $request->input('email');
         $email = strtolower($email);
         // Generate token
@@ -339,6 +497,19 @@ class UserController extends Controller
      */
     public function reset_password(Request $request, $token)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'RESET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
         $password_reset = PasswordReset::where('token', $token)->first();
         if (!$password_reset) {
@@ -367,6 +538,19 @@ class UserController extends Controller
      */
     public function update_forgotten_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'RESET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = $request->input('email');
         $email = strtolower($email);
         $password = $request->input('password');

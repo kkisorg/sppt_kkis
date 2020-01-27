@@ -12,6 +12,7 @@ use App\AnnouncementOnlineMediaPublishSchedule;
 use App\AnnouncementRequest;
 use App\Media;
 use App\OfflineDistribution;
+use App\UserActivityTracking;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
 use App\Http\Controllers\Traits\AnnouncementOnlineMediaPublishScheduler;
 
@@ -37,6 +38,19 @@ class AnnouncementController extends Controller
      */
     public function index(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_INDEX',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -99,6 +113,19 @@ class AnnouncementController extends Controller
      */
     public function create(Request $request, string $announcement_request_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -126,6 +153,19 @@ class AnnouncementController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -180,6 +220,19 @@ class AnnouncementController extends Controller
      */
     public function edit(Request $request, string $announcement_request_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -223,6 +276,19 @@ class AnnouncementController extends Controller
      */
     public function update(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -279,6 +345,19 @@ class AnnouncementController extends Controller
      */
     public function edit_distribution_schedule(Request $request, string $announcement_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_DISTRIBUTION_SCHEDULE_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
 
         $announcement = Announcement::findOrFail($announcement_id);
@@ -326,6 +405,19 @@ class AnnouncementController extends Controller
      */
     public function update_distribution_schedule(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_DISTRIBUTION_SCHEDULE_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
 
         $announcement_id = $request->input('announcement-id');
@@ -410,6 +502,19 @@ class AnnouncementController extends Controller
      */
     public function view(Request $request, string $announcement_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_VIEW',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -439,6 +544,19 @@ class AnnouncementController extends Controller
      */
     public function delete(Request $request, string $announcement_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_DELETE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -460,6 +578,19 @@ class AnnouncementController extends Controller
      */
     public function view_all(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_VIEW_ALL',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
         $current_timestamp = $now->timestamp;
 

@@ -13,6 +13,7 @@ use App\AnnouncementOnlineMediaPublishSchedule;
 use App\AnnouncementOnlineMediaPublishRecord;
 use App\Media;
 use App\User;
+use App\UserActivityTracking;
 use App\Mail\PublishToOnlineMedia;
 
 class AnnouncementOnlineMediaPublishScheduleController extends Controller
@@ -35,6 +36,19 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
      */
     public function index(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_ONLINE_MEDIA_PUBLISH_SCHEDULE_INDEX',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -57,6 +71,19 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
      */
     public function view(Request $request, string $schedule_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_ONLINE_MEDIA_PUBLISH_SCHEDULE_VIEW',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -122,6 +149,19 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
      */
     public function manual_invoke(Request $request, string $schedule_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_ONLINE_MEDIA_PUBLISH_SCHEDULE_MANUAL_INVOKE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {

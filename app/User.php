@@ -100,4 +100,12 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Announcement', 'editor_id');
     }
+
+    /**
+     * Get the activity tracking record that was performed by the user.
+     */
+    public function user_activity_tracking()
+    {
+        return $this->hasMany('App\UserActivityTracking');
+    }
 }
