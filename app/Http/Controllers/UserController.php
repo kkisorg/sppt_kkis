@@ -95,12 +95,17 @@ class UserController extends Controller
         $credentials = array(
             'email' => $email,
             'password' => $password,
-            'is_active' => true
+            'is_active' => true,
+            'is_blocked' => false
         );
 
         if (Auth::attempt($credentials, $remember)) {
             // The user is active, not suspended, and exists
             return redirect('/', 303)->with('success_message', 'Login berhasil.');
+        } elseif (User::where('email', $email)->where('is_blocked', true)->first()) {
+            // The user is blocked
+            return redirect('/login', 303)
+                ->with('error_message', 'Akun Anda diblokir. Silakan hubungi admin.');
         } elseif (User::where('email', $email)->where('is_active', false)->first()) {
             // The user is not active
             return redirect('/login', 303)
@@ -727,7 +732,7 @@ class UserController extends Controller
     }
 
     /**
-     * Resend activation email to the user.
+     * Update admin role of the user.
      *
      * @param Request $request
      * @return Response
@@ -770,8 +775,52 @@ class UserController extends Controller
 
         return redirect('/account_management', 303)
             ->with('success_message', 'Akses admin akun user telah berhasil diubah.');
+    }
 
+    /**
+     * Update block status of the user.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function update_block_status(Request $request, string $user_id)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'USER_UPDATE_BLOCK_STATUS',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
 
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $current_user = Auth::user();
+        if (!$current_user->is_admin) {
+            abort(403);
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return redirect('/account_management', 303)
+                ->with('error_message', 'Akun user yang Anda masukkan tidak valid.');
+        }
+
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+
+        return redirect('/account_management', 303)
+            ->with('success_message', 'Status blokir akun user telah berhasil diubah.');
     }
 
 }

@@ -103,3 +103,4 @@ Route::get('/account_management', 'UserController@index');
 Route::get('/account_management/resend_activation_email/{user_id}', 'UserController@resend_activation_email');
 Route::get('/account_management/force_activate/{user_id}', 'UserController@force_activate');
 Route::get('/account_management/update_admin_role/{user_id}', 'UserController@update_admin_role');
+Route::get('/account_management/update_block_status/{user_id}', 'UserController@update_block_status');

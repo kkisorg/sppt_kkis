@@ -23,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $guarded = [
-        'is_active', 'is_admin'
+        'is_active', 'is_admin', 'is_blocked'
     ];
 
     /**

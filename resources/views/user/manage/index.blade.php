@@ -60,7 +60,19 @@
                         <a class="btn btn-danger" href="/account_management/force_activate/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin mengaktifkan user ini?');"> Paksa Aktifkan </a>
                         @endif
                     </td>
-                    <td>UNDER DEVELOPMENT</td>
+                    <td>
+                        @if ($user->is_blocked)
+                        <div class="text-center">&#x2714;</div>
+                        @if ($current_user->id !== $user->id)
+                        <a class="btn btn-danger" href="/account_management/update_block_status/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin membuka blokir akun user ini?');"> Buka Blokir </a>
+                        @endif
+                        @else
+                        <div class="text-center">&#x2718;</div>
+                        @if ($current_user->id !== $user->id)
+                        <a class="btn btn-warning" href="/account_management/update_block_status/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin memblokir akun user ini?');"> Blokir </a>
+                        @endif
+                        @endif
+                    </td>
                     <td>
                         @if ($user->is_admin)
                         <div class="text-center">&#x2714;</div>
