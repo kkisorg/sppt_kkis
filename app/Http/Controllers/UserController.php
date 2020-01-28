@@ -602,6 +602,12 @@ class UserController extends Controller
             'header' => json_encode($request->header()),
         ]);
 
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
         // Non-admin cannot perform this action
         $current_user = Auth::user();
         if (!$current_user->is_admin) {
@@ -634,6 +640,12 @@ class UserController extends Controller
             'ip' => $request->ip(),
             'header' => json_encode($request->header()),
         ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
 
         // Non-admin cannot perform this action
         $user = Auth::user();
@@ -678,6 +690,12 @@ class UserController extends Controller
             'ip' => $request->ip(),
             'header' => json_encode($request->header()),
         ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
 
         // Non-admin cannot perform this action
         $user = Auth::user();
@@ -728,6 +746,12 @@ class UserController extends Controller
             'ip' => $request->ip(),
             'header' => json_encode($request->header()),
         ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
 
         // Non-admin cannot perform this action
         $current_user = Auth::user();
