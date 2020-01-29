@@ -78,8 +78,8 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         // Extract all image URL.
         preg_match_all('/(<img src=")(.*?)(")/', $str, $tmp_image_path_array);
         foreach ($tmp_image_path_array[2] as $image_path) {
-            if (substr($image_path, 0, strlen('/storage/')) == '/storage/') {
-                $image_path = substr($image_path, strlen('/storage/'));
+            if (substr($image_path, strpos($image_path, '/storage/'), strlen('/storage/')) == '/storage/') {
+                $image_path = substr($image_path, strpos($image_path, '/storage/') + strlen('/storage/'));
             }
             array_push($this->image_path_array, storage_path('app/public/'.$image_path));
         }

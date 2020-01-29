@@ -54,8 +54,8 @@ class ShareOfflineDistribution extends Mailable implements ShouldQueue
                 // prepending "/storage" to the given path; so to reverse it,
                 // "/storage" is trimmed.
                 // Documentation: https://laravel.com/docs/5.6/filesystem#file-urls
-                if (substr($path, 0, strlen('/storage/')) == '/storage/') {
-                    $path = substr($path, strlen('/storage/'));
+                if (substr($path, strpos($path, '/storage/'), strlen('/storage/')) == '/storage/') {
+                    $path = substr($path, strpos($path, '/storage/') + strlen('/storage/'));
                 }
                 $data = file_get_contents(storage_path('app/public/'.$path));
                 $base64 = 'data:image/'.$file_extension.';base64,'.base64_encode($data);
