@@ -6,6 +6,7 @@ use Auth;
 use Illuminate\Http\Request;
 
 use App\Media;
+use App\UserActivityTracking;
 
 class PublicController extends Controller
 {
@@ -27,6 +28,19 @@ class PublicController extends Controller
      */
     public function main_menu(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'MAIN_MENU',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $user = Auth::user();
 
         $offline_media_name_array = Media

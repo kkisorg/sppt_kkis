@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddRecipientEmailToOfflineDistributionTable extends Migration
+class AddIsBlockedToUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddRecipientEmailToOfflineDistributionTable extends Migration
      */
     public function up()
     {
-        Schema::table('offline_distribution', function (Blueprint $table) {
-            $table->string('recipient_email', 500)->after('deadline_timestamp')->default('');
+        Schema::table('user', function (Blueprint $table) {
+            $table->boolean('is_blocked')->default(false)->after('is_admin');
         });
     }
 
@@ -25,8 +25,8 @@ class AddRecipientEmailToOfflineDistributionTable extends Migration
      */
     public function down()
     {
-        Schema::table('offline_distribution', function (Blueprint $table) {
-            $table->dropColumn('recipient_email');
+        Schema::table('user', function (Blueprint $table) {
+            $table->dropColumn('is_blocked');
         });
     }
 }

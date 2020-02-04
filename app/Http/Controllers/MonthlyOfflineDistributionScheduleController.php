@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Media;
 use App\MonthlyOfflineDistributionSchedule;
 use App\OfflineDistribution;
+use App\UserActivityTracking;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
 
 class MonthlyOfflineDistributionScheduleController extends Controller
@@ -33,6 +34,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function index(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_INDEX',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -75,6 +89,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function create(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -93,6 +120,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -141,6 +181,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function edit(Request $request, string $monthly_offline_distribution_schedule_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -170,6 +223,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function update(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -219,6 +285,19 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      */
     public function delete(Request $request, string $monthly_offline_distribution_schedule_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_DELETE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -237,9 +316,54 @@ class MonthlyOfflineDistributionScheduleController extends Controller
      *
      * @return void
      */
-    public function run()
+    public function __invoke()
     {
-        $now = Carbon::now();
+        $timestamp = Carbon::now()->timestamp;
+        $this->run($timestamp);
+        return;
+    }
+
+    /**
+     * Run offline distribution insertion jobs manually
+     *
+     * @return void
+     */
+    public function manual_invoke(Request $request)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'MONTHLY_OFFLINE_DISTRIBUTION_SCHEDULE_MANUAL_INVOKE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $datetime = $request->input('datetime');
+        $timestamp = Carbon::parse($datetime)->timestamp;
+        $this->run($timestamp);
+        return redirect('/monthly_offline_distribution_schedule', 303)
+            ->with('success_message', 'Jadwal distribusi offline bulanan telah berhasil dieksekusi.');
+    }
+
+    /**
+     * Execute offline distribution insertion jobs
+     *
+     * @return void
+     */
+    private function run(int $timestamp)
+    {
+        $now = Carbon::createFromTimestamp($timestamp);
         $current_weekofmonth = $now->weekOfMonth;
 
         // Special action for week 5
@@ -291,8 +415,17 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                     continue;
                 }
 
+                // Avoid duplication
+                $distribution_exists = OfflineDistribution
+                    ::where('offline_media_id', $schedule->offline_media_id)
+                    ->where('distribution_timestamp', $distribution_timestamp)
+                    ->exists();
+                if ($distribution_exists) {
+                    continue;
+                }
+
                 $offline_distribution = OfflineDistribution::create([
-                    'name' => $schedule->name.' '.Carbon::parse($distribution_date)->format('F Y'),
+                    'name' => $schedule->name.' ('.Carbon::parse($distribution_date)->format('l, j F Y').')',
                     'header' => $schedule->default_header,
                     'footer' => $schedule->default_footer,
                     'offline_media_id' => $schedule->offline_media_id,

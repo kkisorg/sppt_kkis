@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OnlineMedia extends Model
+class EmailSendSchedule extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'online_media';
+    protected $table = 'email_send_schedule';
 
     /**
      * The attributes that aren't mass assignable.
@@ -46,18 +46,19 @@ class OnlineMedia extends Model
     const UPDATED_AT = 'update_timestamp';
 
     /**
-     * Get the media associated with the online media.
+     * The default value of some attributes.
+     *
+     * @var string
      */
-    public function media()
-    {
-        return $this->belongsTo('App\Media');
-    }
+    protected $attributes = array(
+       'status' => 'INITIAL'
+    );
 
     /**
-     * Get the online media publish schedule associated with the announcement.
+     * Get the announcement associated with the online media publish schedule.
      */
-    public function announcement_online_media_publish_schedule()
+    public function email_send_record()
     {
-        return $this->hasMany('App\AnnouncementOnlineMediaPublishSchedule', 'media_id', 'media_id');
+        return $this->hasMany('App\EmailSendRecord');
     }
 }

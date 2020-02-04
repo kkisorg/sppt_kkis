@@ -9,11 +9,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
 use App\AccountActivation;
-use App\User;
+use App\EmailSendSchedule;
 use App\PasswordReset;
-use App\Mail\ActivateAccount;
-use App\Mail\PasswordChanged;
-use App\Mail\ResetPassword;
+use App\User;
+use App\UserActivityTracking;
 
 class UserController extends Controller
 {
@@ -35,10 +34,37 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'LOGIN',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // If user is authenticated, redirect to main menu
         if (Auth::check()) {
             return redirect('/', 303);
         }
+
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'LOGIN',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         return view('user.login');
     }
 
@@ -50,18 +76,36 @@ class UserController extends Controller
      */
     public function authenticate(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'AUTHENTICATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = strtolower($request->input('email'));
         $password = $request->input('password');
         $remember = $request->input('remember');
         $credentials = array(
             'email' => $email,
             'password' => $password,
-            'is_active' => true
+            'is_active' => true,
+            'is_blocked' => false
         );
 
         if (Auth::attempt($credentials, $remember)) {
             // The user is active, not suspended, and exists
             return redirect('/', 303)->with('success_message', 'Login berhasil.');
+        } elseif (User::where('email', $email)->where('is_blocked', true)->first()) {
+            // The user is blocked
+            return redirect('/login', 303)
+                ->with('error_message', 'Akun Anda diblokir. Silakan hubungi admin.');
         } elseif (User::where('email', $email)->where('is_active', false)->first()) {
             // The user is not active
             return redirect('/login', 303)
@@ -80,6 +124,19 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'LOGOUT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         Auth::logout();
         return redirect('/')->with('success_info', 'Logout berhasil.');
     }
@@ -92,6 +149,19 @@ class UserController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'REGISTER',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $name = $request->input('name');
         $mobile_number = $request->input('mobile-number');
         $organization_name = $request->input('organization-name');
@@ -126,9 +196,19 @@ class UserController extends Controller
                 'user_id' => $user->id,
                 'token' => $token
             ]);
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new ActivateAccount($user, $token));
+
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+                'token' => $token
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'ActivateAccount',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
 
             return redirect('/login', 303)->with(
                 'success_message',
@@ -145,6 +225,19 @@ class UserController extends Controller
      */
     public function activate(Request $request, string $token)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ACTIVATE_ACCOUNT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $account_activation = AccountActivation::where('token', $token)->first();
         if (!$account_activation) {
             return redirect('/login', 303)
@@ -170,6 +263,19 @@ class UserController extends Controller
      */
     public function edit_profile(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'EDIT_PROFILE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah profil.');
@@ -187,6 +293,19 @@ class UserController extends Controller
      */
     public function update_profile(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'EDIT_PROFILE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah profil.');
@@ -212,6 +331,19 @@ class UserController extends Controller
      */
     public function edit_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'EDIT_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah password.');
@@ -228,6 +360,19 @@ class UserController extends Controller
      */
     public function update_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'EDIT_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (!Auth::check()) {
             return redirect('/login', 303)
                 ->with('error_message', 'Anda diharuskan login terlebih dahulu untuk mengubah password.');
@@ -247,9 +392,18 @@ class UserController extends Controller
                 'password' => $new_password_hashed
             ]);
             // Send email to user for acknowledgement
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new PasswordChanged($user));
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'PasswordChanged',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
+
             // Logout
             Auth::logout();
             return redirect('/login', 303)
@@ -265,6 +419,19 @@ class UserController extends Controller
      */
     public function forget_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'FORGET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         if (Auth::check()) {
             return redirect('/', 303);
         }
@@ -279,6 +446,19 @@ class UserController extends Controller
      */
     public function insert_password_reset(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'FORGET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = $request->input('email');
         $email = strtolower($email);
         // Generate token
@@ -290,10 +470,21 @@ class UserController extends Controller
         $user = User::where('email', $email)->first();
         if ($user) {
             $create_time = $password_reset->create_timestamp->toDateTimeString();
+
             // Send email to user for follow up
-            Mail::to($user)
-                ->bcc(config('mail.from.address'))
-                ->send(new ResetPassword($user, $token, $create_time));
+            // Prepare parameter for email and create schedule accordingly.
+            $email_parameter = array(
+                'to' => array($user->email),
+                'user' => $user->toJson(),
+                'user_id' => $user->id,
+                'token' => $token,
+                'create_time' => $create_time
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'ResetPassword',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
         }
         return redirect('/login', 303)
             ->with('success_message',
@@ -311,6 +502,19 @@ class UserController extends Controller
      */
     public function reset_password(Request $request, $token)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'RESET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
         $password_reset = PasswordReset::where('token', $token)->first();
         if (!$password_reset) {
@@ -339,6 +543,19 @@ class UserController extends Controller
      */
     public function update_forgotten_password(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'RESET_PASSWORD',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $email = $request->input('email');
         $email = strtolower($email);
         $password = $request->input('password');
@@ -351,13 +568,259 @@ class UserController extends Controller
         ]);
 
         // Send email to user for acknowledgement
-        Mail::to($user)
-            ->bcc(config('mail.from.address'))
-            ->send(new PasswordChanged($user));
+        // Prepare parameter for email and create schedule accordingly.
+        $email_parameter = array(
+            'to' => array($user->email),
+            'user' => $user->toJson(),
+            'user_id' => $user->id,
+        );
+        EmailSendSchedule::create([
+            'email_class' => 'PasswordChanged',
+            'request_parameter' => json_encode($email_parameter),
+            'send_timestamp' => Carbon::now()->timestamp
+        ]);
 
         // Logout
         Auth::logout();
         return redirect('/login', 303)
             ->with('success_message', 'Password Anda telah berhasil diganti. Silakan login ulang.');
     }
+
+    /**
+     * Display the list of user
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'USER_MANAGE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $current_user = Auth::user();
+        if (!$current_user->is_admin) {
+            abort(403);
+        }
+        $users = User::all();
+        return view('user.manage.index', [
+            'current_user' => $current_user,
+            'users' => $users
+        ]);
+    }
+
+    /**
+     * Force activate user.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function force_activate(Request $request, string $user_id)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'USER_FORCE_ACTIVATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $account_activation = AccountActivation::where('user_id', $user_id)->first();
+        if (!$account_activation) {
+            return redirect('/account_management', 303)
+                ->with('error_message', 'Akun user yang Anda masukkan tidak valid.');
+        }
+        $user = $account_activation->user;
+        if ($user->is_active) {
+            return redirect('/account_management', 303)
+                ->with('success_message', 'Akun user sudah aktif.');
+        }
+        $user->is_active = true;
+        $user->save();
+
+        return redirect('/account_management', 303)
+            ->with('success_message', 'Akun user telah berhasil diaktivasi.');
+    }
+
+    /**
+     * Resend activation email to the user.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function resend_activation_email(Request $request, string $user_id)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'USER_RESEND_ACTIVATION_EMAIL',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $user = Auth::user();
+        if (!$user->is_admin) {
+            abort(403);
+        }
+
+        $account_activation = AccountActivation::where('user_id', $user_id)->first();
+        if (!$account_activation) {
+            return redirect('/account_management', 303)
+                ->with('error_message', 'Akun user yang Anda masukkan tidak valid.');
+        }
+
+        // Prepare parameter for email and create schedule accordingly.
+        $email_parameter = array(
+            'to' => array($account_activation->user->email),
+            'user' => $account_activation->user->toJson(),
+            'user_id' => $account_activation->user->id,
+            'token' => $account_activation->token
+        );
+        EmailSendSchedule::create([
+            'email_class' => 'ActivateAccount',
+            'request_parameter' => json_encode($email_parameter),
+            'send_timestamp' => Carbon::now()->timestamp
+        ]);
+
+        return redirect('/account_management', 303)
+            ->with('success_message', 'Email aktivasi akun user telah berhasil dikirim ulang.');
+    }
+
+    /**
+     * Update admin role of the user.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function update_admin_role(Request $request, string $user_id)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'USER_UPDATE_ADMIN_ROLE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $current_user = Auth::user();
+        if (!$current_user->is_admin) {
+            abort(403);
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return redirect('/account_management', 303)
+                ->with('error_message', 'Akun user yang Anda masukkan tidak valid.');
+        }
+
+        $user->is_admin = !$user->is_admin;
+        $user->save();
+
+        return redirect('/account_management', 303)
+            ->with('success_message', 'Akses admin akun user telah berhasil diubah.');
+    }
+
+    /**
+     * Update block status of the user.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function update_block_status(Request $request, string $user_id)
+    {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'USER_UPDATE_BLOCK_STATUS',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
+        // Determine if the current user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login', 303)
+                ->with('error_message', 'Anda diharuskan login terlebih dahulu.');
+        }
+
+        // Non-admin cannot perform this action
+        $current_user = Auth::user();
+        if (!$current_user->is_admin) {
+            abort(403);
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return redirect('/account_management', 303)
+                ->with('error_message', 'Akun user yang Anda masukkan tidak valid.');
+        }
+
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+
+        return redirect('/account_management', 303)
+            ->with('success_message', 'Status blokir akun user telah berhasil diubah.');
+    }
+
 }

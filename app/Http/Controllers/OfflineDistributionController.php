@@ -8,10 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 use App\Announcement;
+use App\EmailSendSchedule;
 use App\Media;
 use App\OfflineDistribution;
+use App\UserActivityTracking;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
-use App\Mail\ShareOfflineDistribution;
 
 class OfflineDistributionController extends Controller
 {
@@ -35,6 +36,19 @@ class OfflineDistributionController extends Controller
      */
     public function index(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_INDEX',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -79,6 +93,19 @@ class OfflineDistributionController extends Controller
      */
     public function create(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -97,6 +124,19 @@ class OfflineDistributionController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -115,6 +155,9 @@ class OfflineDistributionController extends Controller
 
         $offline_distribution = OfflineDistribution::create([
             'name' => $name,
+            'header' => '',
+            'content' => '',
+            'footer' => '',
             'offline_media_id' => $media_id,
             'distribution_timestamp' => $distribution_timestamp,
             'deadline_timestamp' => $deadline_timestamp,
@@ -137,6 +180,19 @@ class OfflineDistributionController extends Controller
      */
     public function edit(Request $request, string $offline_distribution_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -165,6 +221,19 @@ class OfflineDistributionController extends Controller
      */
     public function update(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -205,6 +274,19 @@ class OfflineDistributionController extends Controller
      */
     public function view(Request $request, string $offline_distribution_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_VIEW',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -232,6 +314,19 @@ class OfflineDistributionController extends Controller
      */
     public function delete(Request $request, string $offline_distribution_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_DELETE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -254,6 +349,19 @@ class OfflineDistributionController extends Controller
      */
     public function edit_content(Request $request, string $offline_distribution_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_CONTENT_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -282,6 +390,19 @@ class OfflineDistributionController extends Controller
      */
     public function update_content(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_CONTENT_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -311,6 +432,19 @@ class OfflineDistributionController extends Controller
      */
     public function view_all(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_VIEW_ALL',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $now = Carbon::now();
         $two_weeks_ago = $now->subDays(14);
         $two_weeks_ago_timestamp = $two_weeks_ago->timestamp;
@@ -335,6 +469,19 @@ class OfflineDistributionController extends Controller
      */
     public function share(Request $request, string $offline_distribution_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'OFFLINE_DISTRIBUTION_SHARE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Non-admin cannot perform this action
         $user = Auth::user();
         if (!$user->is_admin) {
@@ -346,9 +493,17 @@ class OfflineDistributionController extends Controller
 
         $recipient_email_array = explode(",", $recipient_email);
 
-        Mail::to($recipient_email_array)
-            ->bcc(config('mail.from.address'))
-            ->send(new ShareOfflineDistribution($offline_distribution));
+        // Prepare parameter for email and create schedule accordingly.
+        $email_parameter = array(
+            'to' => $recipient_email_array,
+            'offline_distribution' => $offline_distribution->toJson(),
+            'offline_distribution_id' => $offline_distribution_id,
+        );
+        EmailSendSchedule::create([
+            'email_class' => 'ShareOfflineDistribution',
+            'request_parameter' => json_encode($email_parameter),
+            'send_timestamp' => Carbon::now()->timestamp
+        ]);
 
         return redirect('/offline_distribution', 303)
             ->with('success_message', 'Distribusi telah berhasil dibagikan ke '.$recipient_email);

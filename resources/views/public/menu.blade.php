@@ -1,4 +1,4 @@
-@extends('layout.base')
+@extends('layout.base', ['hide_menu' => true])
 
 @section('title', 'Menu Utama')
 
@@ -22,7 +22,7 @@
 @section('content')
     @include('layout.message')
     <div class="row">
-        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3><b>Menu User</b></h3>
@@ -81,7 +81,7 @@
             </div>
         </div>
         @if($user->is_admin)
-        <div class="col xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3><b>Menu Admin</b></h3>
@@ -103,6 +103,29 @@
                     </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/media">
+                                Buat/Ubah/Hapus Media
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/account_management">
+                                Kelola Akun User
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col xs-12 col-sm-4 col-md-4 col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3><b>Menu Super Admin</b></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a class="btn btn-default btn-block" href="/monthly_offline_distribution_schedule">
                                 Buat/Ubah/Hapus Jadwal Distribusi Offline Bulanan
                             </a>
@@ -110,8 +133,15 @@
                     </div>
                     <div class="row form-group center-block">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="btn btn-default btn-block" href="/media">
-                                Buat/Ubah/Hapus Media
+                            <a class="btn btn-default btn-block" href="/email_send_schedule">
+                                Lihat/Kelola Jadwal Pengiriman Email
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row form-group center-block">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="btn btn-default btn-block" href="/announcement_online_media_publish_schedule">
+                                Lihat/Kelola Jadwal Publikasi ke Media Online
                             </a>
                         </div>
                     </div>

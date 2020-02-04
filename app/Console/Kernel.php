@@ -5,6 +5,10 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+use App\Http\Controllers\AnnouncementOnlineMediaPublishScheduleController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\MonthlyOfflineDistributionScheduleController;
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -27,10 +31,20 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
+        // Send email
+        $schedule
+            ->call(new EmailController)
+            ->everyMinute();
+
         // Add monthly offline distribution
         $schedule
-            ->call('App\Http\Controllers\MonthlyOfflineDistributionScheduleController@run')
+            ->call(new MonthlyOfflineDistributionScheduleController)
             ->weeklyOn(1, '3:00');
+
+        // Publish announcement to online media
+        $schedule
+            ->call(new AnnouncementOnlineMediaPublishScheduleController)
+            ->everyMinute();
     }
 
     /**

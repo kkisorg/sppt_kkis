@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\AnnouncementRequest;
 use App\AnnouncementRequestHistory;
 use App\Media;
+use App\UserActivityTracking;
 
 class AnnouncementRequestController extends Controller
 {
@@ -30,6 +31,19 @@ class AnnouncementRequestController extends Controller
      */
     public function index(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_INDEX',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $user = Auth::user();
         $now = Carbon::now();
         $current_timestamp = $now->timestamp;
@@ -55,6 +69,19 @@ class AnnouncementRequestController extends Controller
      */
     public function create(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         // Display new announcement form
         $user = Auth::user();
         $media = Media::where('is_active', true)->get();
@@ -72,6 +99,19 @@ class AnnouncementRequestController extends Controller
      */
     public function insert(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_CREATE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $organization_name = $request->input('organization-name');
         $title = $request->input('title');
         $content =  $request->input('content');
@@ -116,6 +156,19 @@ class AnnouncementRequestController extends Controller
      */
     public function edit(Request $request, string $announcement_request_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $user = Auth::user();
 
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
@@ -142,6 +195,19 @@ class AnnouncementRequestController extends Controller
      */
     public function update(Request $request)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_EDIT',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $user = Auth::user();
 
         $announcement_request_id = $request->input('id');
@@ -198,6 +264,19 @@ class AnnouncementRequestController extends Controller
      */
     public function view(Request $request, $announcement_request_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'DISPLAY',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_VIEW',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
 
         $announcement_request->event_datetime =
@@ -232,6 +311,19 @@ class AnnouncementRequestController extends Controller
      */
     public function delete(Request $request, string $announcement_request_id)
     {
+        // Track user activity
+        UserActivityTracking::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'CLICK',
+            'activity_details' => 'ANNOUNCEMENT_REQUEST_DELETE',
+            'full_url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'is_secure' => $request->secure(),
+            'ip' => $request->ip(),
+            'header' => json_encode($request->header()),
+        ]);
+        
         $user = Auth::user();
 
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);

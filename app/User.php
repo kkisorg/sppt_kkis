@@ -23,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $guarded = [
-        'is_active', 'is_admin'
+        'is_active', 'is_admin', 'is_blocked'
     ];
 
     /**
@@ -99,5 +99,13 @@ class User extends Authenticatable
     public function announcement_edit()
     {
         return $this->hasMany('App\Announcement', 'editor_id');
+    }
+
+    /**
+     * Get the activity tracking record that was performed by the user.
+     */
+    public function user_activity_tracking()
+    {
+        return $this->hasMany('App\UserActivityTracking');
     }
 }
