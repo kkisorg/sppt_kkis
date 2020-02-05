@@ -173,7 +173,7 @@ class AnnouncementRequestController extends Controller
 
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
         // User is not allowed to edit someone else's $announcement request
-        if ($announcement_request->creator_id !== $user->id) {
+        if ($announcement_request->creator_id != $user->id) {
             abort(403);
         }
 
@@ -213,7 +213,7 @@ class AnnouncementRequestController extends Controller
         $announcement_request_id = $request->input('id');
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
         // User is not allowed to edit someone else's $announcement request
-        if ($announcement_request->creator_id !== $user->id) {
+        if ($announcement_request->creator_id != $user->id) {
             abort(403);
         }
 
@@ -328,7 +328,7 @@ class AnnouncementRequestController extends Controller
 
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);
         // User is not allowed to delete someone else's $announcement request
-        if ($announcement_request->creator_id !== $user->id) {
+        if ($announcement_request->creator_id != $user->id) {
             abort(403);
         }
 

@@ -414,7 +414,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                 $recipient_email = $schedule->recipient_email;
 
                 // This case happen when there is no fifth week in the following month
-                if ($weekofmonth === 5) {
+                if ($weekofmonth == 5) {
                     $second_week_str = 'second '.$dayofweek[$schedule->distribution_dayofweek].' of '.$next_month_str;
                     if (Carbon::parse($distribution_date)->lessThan(Carbon::createFromTimestamp(strtotime($second_week_str)))) {
                         continue;

@@ -63,12 +63,12 @@
                     <td>
                         @if ($user->is_blocked)
                         <div class="text-center">&#x2714;</div>
-                        @if ($current_user->id !== $user->id)
+                        @if ($current_user->id != $user->id)
                         <a class="btn btn-danger" href="/account_management/update_block_status/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin membuka blokir akun user ini?');"> Buka Blokir </a>
                         @endif
                         @else
                         <div class="text-center">&#x2718;</div>
-                        @if ($current_user->id !== $user->id)
+                        @if ($current_user->id != $user->id)
                         <a class="btn btn-warning" href="/account_management/update_block_status/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin memblokir akun user ini?');"> Blokir </a>
                         @endif
                         @endif
@@ -76,12 +76,12 @@
                     <td>
                         @if ($user->is_admin)
                         <div class="text-center">&#x2714;</div>
-                        @if ($current_user->id !== $user->id)
+                        @if ($current_user->id != $user->id)
                         <a class="btn btn-danger" href="/account_management/update_admin_role/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin menurunkan user ini dari admin?');"> Turunkan dari Admin </a>
                         @endif
                         @else
                         <div class="text-center">&#x2718;</div>
-                        @if ($current_user->id !== $user->id)
+                        @if ($current_user->id != $user->id)
                         <a class="btn btn-warning" href="/account_management/update_admin_role/{{ $user->id }}" onclick="return confirm('Apakah Anda yakin menaikkan user ini sebagai admin?');"> Naikkan sebagai Admin </a>
                         @endif
                         @endif
