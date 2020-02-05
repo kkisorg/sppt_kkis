@@ -81,9 +81,9 @@
                         <div class="row form-group center-block">
                             <label> Durasi Pengumuman: </label>
                             <ul id="duration-ul">
-                                <li class="form-group"><label for="duration-35" class="radio-inline"><input type="radio" name="duration" id="duration-35" value="35" @if ($announcement_request->duration === 35) checked @endif> Dari 1 bulan sebelum kegiatan sampai hari H </label></li>
-                                <li class="form-group"><label for="duration-70" class="radio-inline"><input type="radio" name="duration" id="duration-70" value="70" @if ($announcement_request->duration === 70) checked @endif> Dari 2 bulan sebelum kegiatan sampai hari H </label></li>
-                                <li class="form-group"><label for="duration-ad" class="radio-inline"><input type="radio" name="duration" id="duration-ad" value="105" @if ($announcement_request->duration === 105) checked @endif> Dari hari ini sampai 3 bulan kedepan, khusus iklan (contoh: cari anggota baru) </label></li>
+                                <li class="form-group"><label for="duration-35" class="radio-inline"><input type="radio" name="duration" id="duration-35" value="35" @if ($announcement_request->duration == 35) checked @endif> Dari 1 bulan sebelum kegiatan sampai hari H </label></li>
+                                <li class="form-group"><label for="duration-70" class="radio-inline"><input type="radio" name="duration" id="duration-70" value="70" @if ($announcement_request->duration == 70) checked @endif> Dari 2 bulan sebelum kegiatan sampai hari H </label></li>
+                                <li class="form-group"><label for="duration-ad" class="radio-inline"><input type="radio" name="duration" id="duration-ad" value="105" @if ($announcement_request->duration == 105) checked @endif> Dari hari ini sampai 3 bulan kedepan, khusus iklan (contoh: cari anggota baru) </label></li>
                             </ul>
                         </div>
                         <hr>
