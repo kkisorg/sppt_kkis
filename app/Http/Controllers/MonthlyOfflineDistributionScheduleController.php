@@ -366,6 +366,9 @@ class MonthlyOfflineDistributionScheduleController extends Controller
         $now = Carbon::createFromTimestamp($timestamp);
         $current_weekofmonth = $now->weekOfMonth;
 
+        $next_month = $now->copy()->addMonth();
+        $next_month_str = $next_month->format('F Y');
+
         // Special action for week 5
         $weekofmonths = array($current_weekofmonth);
         if ($current_weekofmonth == 5) {
@@ -398,7 +401,7 @@ class MonthlyOfflineDistributionScheduleController extends Controller
 
                 $distribution_date = Carbon
                     ::createFromTimestamp(strtotime(
-                        $ordinal_number[$weekofmonth].' '.$dayofweek[$schedule->distribution_dayofweek].' of next month')
+                        $ordinal_number[$weekofmonth].' '.$dayofweek[$schedule->distribution_dayofweek].' of '.$next_month_str)
                     )->format('Y-m-d');
                 $distribution_time = $schedule->distribution_time;
                 $distribution_timestamp = Carbon::parse($distribution_date.' '.$distribution_time)->timestamp;
@@ -410,9 +413,12 @@ class MonthlyOfflineDistributionScheduleController extends Controller
                 $deadline_timestamp = Carbon::parse($deadline_date.' '.$deadline_time)->timestamp;
                 $recipient_email = $schedule->recipient_email;
 
-                // This case happen when there is no fifth week next month
-                if (Carbon::parse($distribution_date)->greaterThan(Carbon::createFromTimestamp(strtotime('last day of next month')))) {
-                    continue;
+                // This case happen when there is no fifth week in the following month
+                if ($weekofmonth === 5) {
+                    $second_week_str = 'second '.$dayofweek[$schedule->distribution_dayofweek].' of '.$next_month_str;
+                    if (Carbon::parse($distribution_date)->lessThan(Carbon::createFromTimestamp(strtotime($second_week_str)))) {
+                        continue;
+                    }
                 }
 
                 // Avoid duplication
