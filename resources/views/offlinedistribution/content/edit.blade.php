@@ -6,13 +6,163 @@
 <script>
     $(document).ready(function() {
         ClassicEditor.create(document.querySelector('#header'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
+            simpleUpload: {
+                uploadUrl: '{{ URL::to('/')}}/api/image_upload'
+            },
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'fontFamily',
+                    'fontSize',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    'subscript',
+                    'superscript',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'alignment',
+                    '|',
+                    'indent',
+                    'outdent',
+                    '|',
+                    'imageUpload',
+                    'insertTable',
+                    'link',
+                    'mediaEmbed',
+                    'undo',
+                    'redo'
+                ]
+            },
+            language: 'en',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:full',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            },
+            licenseKey: '',
+        }).then(editor => {
+            window.editor = editor;
         }).catch(error => {console.error(error);});
         ClassicEditor.create(document.querySelector('#content'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
+            simpleUpload: {
+                uploadUrl: '{{ URL::to('/')}}/api/image_upload'
+            },
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'fontFamily',
+                    'fontSize',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    'subscript',
+                    'superscript',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'alignment',
+                    '|',
+                    'indent',
+                    'outdent',
+                    '|',
+                    'imageUpload',
+                    'insertTable',
+                    'link',
+                    'mediaEmbed',
+                    'undo',
+                    'redo'
+                ]
+            },
+            language: 'en',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:full',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            },
+            licenseKey: '',
+        }).then(editor => {
+            window.editor = editor;
         }).catch(error => {console.error(error);});
         ClassicEditor.create(document.querySelector('#footer'), {
-            simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
+            simpleUpload: {
+                uploadUrl: '{{ URL::to('/')}}/api/image_upload'
+            },
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'fontFamily',
+                    'fontSize',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    'subscript',
+                    'superscript',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'alignment',
+                    '|',
+                    'indent',
+                    'outdent',
+                    '|',
+                    'imageUpload',
+                    'insertTable',
+                    'link',
+                    'mediaEmbed',
+                    'undo',
+                    'redo'
+                ]
+            },
+            language: 'en',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:full',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            },
+            licenseKey: '',
+        }).then(editor => {
+            window.editor = editor;
         }).catch(error => {console.error(error);});
     });
 </script>

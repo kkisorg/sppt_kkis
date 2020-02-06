@@ -17,8 +17,58 @@
     $(document).ready(function() {
         ClassicEditor.create(
             document.querySelector('#content'), {
-                simpleUpload: {uploadUrl: '{{ URL::to('/')}}/api/image_upload'}
-            }).catch(error => {console.error(error);});
+                simpleUpload: {
+                    uploadUrl: '{{ URL::to('/')}}/api/image_upload'
+                },
+                toolbar: {
+					items: [
+						'heading',
+						'|',
+						'fontFamily',
+						'fontSize',
+						'|',
+						'bold',
+						'italic',
+						'underline',
+						'strikethrough',
+						'subscript',
+						'superscript',
+						'|',
+						'bulletedList',
+						'numberedList',
+						'|',
+						'alignment',
+						'|',
+						'indent',
+						'outdent',
+						'|',
+						'imageUpload',
+						'insertTable',
+						'link',
+						'mediaEmbed',
+						'undo',
+						'redo'
+					]
+				},
+				language: 'en',
+				image: {
+					toolbar: [
+						'imageTextAlternative',
+						'imageStyle:full',
+						'imageStyle:side'
+					]
+				},
+				table: {
+					contentToolbar: [
+						'tableColumn',
+						'tableRow',
+						'mergeTableCells'
+					]
+				},
+				licenseKey: '',
+            }).then(editor => {
+				window.editor = editor;
+		    }).catch(error => {console.error(error);});
 
         $('#eventdatetimepicker').datetimepicker({
             sideBySide: true,
@@ -57,7 +107,7 @@
                                     tempat/waktu kegiatan, pembicara, biaya pendaftaran, link pendaftaran dan contact person.
                                 </li>
                                 <li>
-                                    <b>Untuk mengunggah flyer kegiatan, klik Insert Image </b>(gambar pemandangan, icon ke-6 dari kiri)
+                                    <b>Untuk mengunggah flyer kegiatan, klik Insert Image </b>(gambar pemandangan)
                                 </li>
                             </ul>
                             <textarea name="content" id="content" class="form-control" rows="5"></textarea>
