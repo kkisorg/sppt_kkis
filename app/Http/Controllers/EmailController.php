@@ -254,20 +254,20 @@ class EmailController extends Controller
                     default:
                         throw new Exception('Unknown email class name.');
                 }
-            } catch (Exception $e) {
-                // If not success, mark as failed.
-                $schedule->update(['status' => 'FAILED']);
-                $record->update([
-                    'status' => 'FAILED',
-                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
-                ]);
-                continue;
             } catch (\Exception $e) {
                 // If not success, mark as failed.
                 $schedule->update(['status' => 'FAILED']);
                 $record->update([
                     'status' => 'FAILED',
-                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
+                    'error' => $e->getMessage()."\n".$e->getTraceAsString()
+                ]);
+                continue;
+            } catch (Exception $e) {
+                // If not success, mark as failed.
+                $schedule->update(['status' => 'FAILED']);
+                $record->update([
+                    'status' => 'FAILED',
+                    'error' => $e->getMessage()."\n".$e->getTraceAsString()
                 ]);
                 continue;
             }
