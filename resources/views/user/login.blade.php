@@ -81,6 +81,9 @@
                             <input type="password" id="register-password-confirmation" name="password-confirmation" class="form-control" required>
                         </div>
                         <div class="form-group">
+                            <p>Dengan mengklik tombol daftar di bawah ini, Anda setuju dengan <a href="/privacy_policy.html" target="_blank">Kebijakan Privasi (Privacy Policy)</a>.</p>
+                        </div>
+                        <div class="form-group">
                             <button type="submit" class="btn btn-default">Daftar</button>
                         </div>
                     </form>
