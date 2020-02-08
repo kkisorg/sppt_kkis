@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/privacy_policy.html
 /storage/*.key
 /vendor
 /.idea
