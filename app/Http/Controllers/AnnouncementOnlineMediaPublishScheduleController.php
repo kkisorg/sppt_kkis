@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
+use Facebook;
+use GuzzleHttp;
+
 use App\Announcement;
 use App\AnnouncementOnlineMediaPublishSchedule;
 use App\AnnouncementOnlineMediaPublishRecord;
@@ -220,6 +223,68 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                                 $schedule, false, false, false
                             ));
                         break;
+                    case 'facebook':
+                        // Prepare content and attachment(s).
+                        $image_path_array = array();
+                        $content = $schedule->content;
+                        // Collect attachment(s).
+                        preg_match_all('/(<img src=")(.*?)(")/', $content, $tmp_image_path_array);
+                        foreach ($tmp_image_path_array[2] as $image_path) {
+                            if (substr($image_path, strpos($image_path, '/storage/'), strlen('/storage/')) == '/storage/') {
+                                $image_path = env('APP_URL').$image_path;
+                            }
+                            array_push($image_path_array, $image_path);
+                        }
+                        // Reformat content.
+                        $content = preg_replace('#<br\s*\/?>#', "\n", $content);
+                        $content = preg_replace('#<\/p>#', "\n\n", $content);
+                        $content = strip_tags($content);
+
+                        if (count($image_path_array) == 0) {
+                            $request_parameter = array('message' => $content);
+                        } else {
+                            $request_parameter = array(
+                                'caption' => $content, 'url' => $image_path_array[0]
+                            );
+                        }
+                        $record->update(['request_parameter' => json_encode($request_parameter)]);
+
+                        // Initialize Facebook SDK.
+                        $client = new GuzzleHttp\Client;
+                        $fb = new Facebook\Facebook([
+                            'app_id' => env('FACEBOOK_APP_ID_'),
+                            'app_secret' => env('FACEBOOK_APP_SECRET'),
+                            'http_client_handler' => new Guzzle6HttpClient($client),
+                        ]);
+                        // Make a HTTP POST request.
+                        if (count($image_path_array) == 0) {
+                            // Text only.
+                            $response = $fb->post(
+                                '/'.env('FACEBOOK_PAGE_ID').'/feed',
+                                array('message' => $content),
+                                env('FACEBOOK_PAGE_ACCESS_TOKEN')
+                            );
+                            $graphNode = $response->getGraphNode();
+                            $response_content = array('id' => $graphNode['id']);
+                        } else {
+                            // Text and image.
+                            // Only take the 1st image.
+                            $response = $fb->post(
+                                '/'.env('FACEBOOK_PAGE_ID').'/photos',
+                                array('caption' => $content, 'url' => $image_path_array[0]),
+                                env('FACEBOOK_PAGE_ACCESS_TOKEN')
+                            );
+                            $graphNode = $response->getGraphNode();
+                            $response_content = array(
+                                'id' => $graphNode['id'], 'post_id' => $graphNode['post_id']
+                            );
+                        }
+
+                        // If success, record the response.
+                        $record->update([
+                            'response_content' => json_encode($response_content)
+                        ]);
+                        break;
                     default:
                         // Send email to administrator.
                         $admin_email_array = User::where('is_admin', true)
@@ -241,12 +306,20 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                             ->send(new PublishToOnlineMedia($schedule));
 
                 }
-            } catch (Exception $e) {
+            } catch (Facebook\Exceptions\FacebookSDKException $e) {
                 // If not success, mark as failed.
                 $schedule->update(['status' => 'FAILED']);
                 $record->update([
                     'status' => 'FAILED',
-                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
+                    'error' => 'Facebook SDK returned an error: ' . $e->getMessage()."\n".$e->getTraceAsString()
+                ]);
+                continue;
+            } catch (Facebook\Exceptions\FacebookResponseException $e) {
+                // If not success, mark as failed.
+                $schedule->update(['status' => 'FAILED']);
+                $record->update([
+                    'status' => 'FAILED',
+                    'error' => 'Graph returned an error: ' . $e->getMessage()."\n".$e->getTraceAsString()
                 ]);
                 continue;
             } catch (\Exception $e) {
@@ -254,7 +327,15 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                 $schedule->update(['status' => 'FAILED']);
                 $record->update([
                     'status' => 'FAILED',
-                    'error' => $e->getMessage().'\n'.$e->getTraceAsString()
+                    'error' => $e->getMessage()."\n".$e->getTraceAsString()
+                ]);
+                continue;
+            } catch (Exception $e) {
+                // If not success, mark as failed.
+                $schedule->update(['status' => 'FAILED']);
+                $record->update([
+                    'status' => 'FAILED',
+                    'error' => $e->getMessage()."\n".$e->getTraceAsString()
                 ]);
                 continue;
             }
@@ -263,5 +344,41 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
             $schedule->update(['status' => 'SUCCESS']);
             $record->update(['status' => 'SUCCESS']);
         }
+    }
+}
+
+class Guzzle6HttpClient implements Facebook\HttpClients\FacebookHttpClientInterface
+{
+    // Work around to make Facebook PHP SDK works with Guzzle 6.x
+    // Reference: https://www.sammyk.me/how-to-inject-your-own-http-client-in-the-facebook-php-sdk-v5#writing-a-guzzle-6-http-client-implementation-from-scratch
+
+    private $client;
+
+    public function __construct(GuzzleHttp\Client $client)
+    {
+        $this->client = $client;
+    }
+
+    public function send($url, $method, $body, array $headers, $timeOut)
+    {
+        $request = new GuzzleHttp\Psr7\Request($method, $url, $headers, $body);
+        try {
+            $response = $this->client->send($request, ['timeout' => $timeOut, 'http_errors' => false]);
+        } catch (GuzzleHttp\Exception\RequestException $e) {
+            throw new Facebook\Exceptions\FacebookSDKException($e->getMessage(), $e->getCode());
+        }
+        $httpStatusCode = $response->getStatusCode();
+        $responseHeaders = $response->getHeaders();
+
+        foreach ($responseHeaders as $key => $values) {
+            $responseHeaders[$key] = implode(', ', $values);
+        }
+
+        $responseBody = $response->getBody()->getContents();
+
+        return new Facebook\Http\GraphRawResponse(
+                        $responseHeaders,
+                        $responseBody,
+                        $httpStatusCode);
     }
 }
