@@ -104,3 +104,11 @@ Route::get('/account_management/resend_activation_email/{user_id}', 'UserControl
 Route::get('/account_management/force_activate/{user_id}', 'UserController@force_activate');
 Route::get('/account_management/update_admin_role/{user_id}', 'UserController@update_admin_role');
 Route::get('/account_management/update_block_status/{user_id}', 'UserController@update_block_status');
+
+// Document management
+Route::get('/document', 'DocumentController@index');
+Route::get('/document/create', 'DocumentController@create');
+Route::post('/document/insert', 'DocumentController@insert');
+Route::get('/document/edit/{document_id}', 'DocumentController@edit');
+Route::post('/document/update', 'DocumentController@update');
+Route::get('/document/delete/{document_id}', 'DocumentController@delete');
