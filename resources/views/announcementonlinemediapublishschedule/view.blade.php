@@ -1,6 +1,6 @@
 @extends('layout.base')
 
-@section('title', 'Lihat Jadwal Pengiriman Email')
+@section('title', 'Lihat Jadwal Publikasi Media Online')
 
 @section('content')
     @include('layout.message')
