@@ -231,6 +231,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         preg_match_all('/(<img src=")(.*?)(")/', $content, $tmp_image_path_array);
                         foreach ($tmp_image_path_array[2] as $image_path) {
                             if (substr($image_path, strpos($image_path, '/storage/'), strlen('/storage/')) == '/storage/') {
+                                $image_path = substr($image_path, strpos($image_path, '/storage/'));
                                 $image_path = env('APP_URL').$image_path;
                             }
                             array_push($image_path_array, $image_path);
