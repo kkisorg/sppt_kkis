@@ -58,7 +58,15 @@ class EmailController extends Controller
         if (!$user->is_admin) {
             abort(403);
         }
-        $schedules = EmailSendSchedule::orderBy('send_timestamp', 'desc')->get();
+
+        $last_month = Carbon::now()->subMonth();
+        $last_month_timestamp = $last_month->timestamp;
+
+        $schedules = EmailSendSchedule
+            ::where('send_timestamp', '>=', $last_month_timestamp)
+            ->orWhere('status', '!=', 'SUCCESS')
+            ->orderBy('send_timestamp', 'desc')
+            ->get();
         foreach ($schedules as $schedule) {
             $schedule->send_datetime =
                 Carbon::createFromTimestamp($schedule->send_timestamp)->format('l, j F Y, g:i a');

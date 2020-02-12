@@ -47,17 +47,11 @@ class AnnouncementRequestController extends Controller
         $user = Auth::user();
         $now = Carbon::now();
         $current_timestamp = $now->timestamp;
-        if (!$user->is_admin) {
-            $present_announcements = $user->announcement_request()
-                ->where('event_timestamp', '>', $current_timestamp)
-                ->orderBy('event_timestamp')
-                ->get();
-        } else {
-            $present_announcements = AnnouncementRequest
-                ::where('event_timestamp', '>', $current_timestamp)
-                ->orderBy('event_timestamp')
-                ->get();
-        }
+        $present_announcements = $user->announcement_request()
+            ->where('event_timestamp', '>', $current_timestamp)
+            ->orderBy('event_timestamp')
+            ->get();
+
         return view('announcementrequest.index', ['present_announcements' => $present_announcements]);
     }
 
@@ -323,7 +317,7 @@ class AnnouncementRequestController extends Controller
             'ip' => $request->ip(),
             'header' => json_encode($request->header()),
         ]);
-        
+
         $user = Auth::user();
 
         $announcement_request = AnnouncementRequest::findOrFail($announcement_request_id);

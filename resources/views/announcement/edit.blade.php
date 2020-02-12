@@ -130,6 +130,36 @@
             useStrict: true,
         });
     });
+
+    function validate(aForm) {
+        // Content must be filled
+        aData = content_editor.getData();
+        if (aData == '') {
+            alert('Isi Pengumuman harus diisi.');
+            content_editor.editing.view.focus();
+            return false;
+        }
+
+        // At least one media must be ticked
+        if ($(':checkbox:checked').length == 0) {
+            alert('Minimum satu media harus dipilih.');
+            return false;
+        };
+
+        // Content of the selected media must be filled
+        var aSelected = $(':checkbox:checked');
+        for (var i = 0; i < aSelected.length; i++) {
+            var editor = window['editor_' + aSelected[i].value];
+            aData = editor.getData();
+            if (aData == '') {
+                alert('Isi Pengumuman harus diisi.');
+                editor.editing.view.focus();
+                return false;
+            }
+        }
+
+        return true;
+    }
 </script>
 @endsection
 
@@ -158,7 +188,7 @@
                 <div class="panel-heading">
                     <strong>Ubah Pengumuman</strong>
                 </div>
-                <form action="/announcement/update" role="form" method="POST" class="form-vertical">
+                <form action="/announcement/update" role="form" method="POST" class="form-vertical"  onsubmit="return validate(this);">
                     {{ csrf_field() }}
                     <input type="hidden" name="announcement-id" id="announcement-id" value="{{ $announcement->id }}">
                     <input type="hidden" name="revision-no" id="revision-no" value="{{ $announcement_request->revision_no }}">

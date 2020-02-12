@@ -14,6 +14,25 @@
             useStrict: true,
         });
     });
+
+    function validate(aForm) {
+        // Deadline time must be before publish time
+        var deadline_datetime = new Date($('#deadline-datetime').val());
+        var distribution_datetime = new Date($('#distribution-datetime').val());
+        if (distribution_datetime <= deadline_datetime) {
+            alert('Waktu deadline haruslah sebelum waktu distribusi.');
+            $('#deadline-datetime').focus();
+            return false;
+        }
+
+        // Recipient email must not be empty
+        if ($('#recipient-email').val() == '') {
+            alert('Daftar Penerima Email harus diisi.');
+            $('#recipient-email').focus();
+            return false;
+        }
+        return true;
+    }
 </script>
 @endsection
 
@@ -25,7 +44,7 @@
                 <div class="panel-heading">
                     <h3><b>Form Distribusi Baru</b></h3>
                 </div>
-                <form action="/offline_distribution/insert" role="form" method="POST" class="form-vertical">
+                <form action="/offline_distribution/insert" role="form" method="POST" class="form-vertical" onsubmit="return validate(this);">
                     {{ csrf_field() }}
                     <div class="panel-body">
                         <div class="row form-group center-block" >
@@ -52,7 +71,7 @@
                         </div>
                         <div class="row form-group center-block">
                             <label for="recipient-email"> Daftar Email Penerima Distribusi (dipisahkan oleh koma): </label>
-                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control" required>
+                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control">
                         </div>
                         <div class="row form-group center-block">
                             <label for="media-id"> Jenis Media: </label>

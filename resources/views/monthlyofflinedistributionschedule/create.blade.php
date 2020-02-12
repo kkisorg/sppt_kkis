@@ -56,7 +56,7 @@
             },
             licenseKey: '',
         }).then(editor => {
-            window.editor = editor;
+            window.header_editor = editor;
         }).catch(error => {console.error(error);});
         ClassicEditor.create(document.querySelector('#default-footer'), {
             simpleUpload: {
@@ -109,7 +109,7 @@
             },
             licenseKey: '',
         }).then(editor => {
-            window.editor = editor;
+            window.footer_editor = editor;
         }).catch(error => {console.error(error);});
         $('#distributiontimepicker').datetimepicker({
             format: 'LT',
@@ -120,6 +120,31 @@
             useStrict: true,
         });
     });
+
+    function validate(aForm) {
+        // Header must be filled
+        aData = header_editor.getData();
+        if (aData == '') {
+            alert('Header harus diisi.');
+            header_editor.editing.view.focus();
+            return false;
+        }
+
+        // Footer must be filled
+        aData = footer_editor.getData();
+        if (aData == '') {
+            alert('Footer harus diisi.');
+            footer_editor.editing.view.focus();
+            return false;
+        }
+
+        if ($('#recipient-email').val() == '') {
+            alert('Daftar Penerima Email harus diisi.');
+            $('#recipient-email').focus();
+            return false;
+        }
+        return true;
+    }
 </script>
 @endsection
 
@@ -131,11 +156,11 @@
                 <div class="panel-heading">
                     <h3><b>Form Jadwal Distribusi Bulanan Baru</b></h3>
                 </div>
-                <form action="/monthly_offline_distribution_schedule/insert" role="form" method="POST" class="form-vertical">
+                <form action="/monthly_offline_distribution_schedule/insert" role="form" method="POST" class="form-vertical" onsubmit="return validate(this);">
                     {{ csrf_field() }}
                     <div class="panel-body">
                         <div class="row form-group center-block" >
-                            <label for="description"> Nama: </label>
+                            <label for="name"> Nama: </label>
                             <input type="text" name="name" id="name" class="form-control" required>
                         </div>
                         <div class="row form-group center-block">
@@ -189,7 +214,7 @@
                         </div>
                         <div class="row form-group center-block">
                             <label for="recipient-email"> Daftar Email Penerima Distribusi (dipisahkan oleh koma): </label>
-                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control" required>
+                            <input type="text" name="recipient-email" id="recipient-email" data-role="tagsinput" class="form-control">
                         </div>
                         <div class="row form-group center-block">
                             <label for="media-id"> Jenis Media: </label>

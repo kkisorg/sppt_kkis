@@ -57,7 +57,15 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
         if (!$user->is_admin) {
             abort(403);
         }
-        $schedules = AnnouncementOnlineMediaPublishSchedule::orderBy('publish_timestamp', 'desc')->get();
+
+        $last_month = Carbon::now()->subMonth();
+        $last_month_timestamp = $last_month->timestamp;
+
+        $schedules = AnnouncementOnlineMediaPublishSchedule
+            ::where('publish_timestamp', '>=', $last_month_timestamp)
+            ->orWhere('status', '!=', 'SUCCESS')
+            ->orderBy('publish_timestamp', 'desc')
+            ->get();
         foreach ($schedules as $schedule) {
             $schedule->publish_datetime =
                 Carbon::createFromTimestamp($schedule->publish_timestamp)->format('l, j F Y, g:i a');
