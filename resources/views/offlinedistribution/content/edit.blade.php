@@ -213,8 +213,9 @@
                         <div><h5><b>Batas Waktu (Deadline): </b>{{ $offline_distribution->deadline_datetime }}</h5></div>
                         <div><h5><b>Media: </b>{{ $offline_distribution->media_name }}</h5></div>
                         <hr>
-                        <div><h5><b>Daftar Pengumuman (Untuk Referensi): </b></h5></div>
+                        <div><h4><b>Daftar Pengumuman (Untuk Referensi): </b></h4></div>
                         @foreach ($offline_distribution->announcement as $announcement)
+                        <div><h5><b>{{ $announcement->title }}</b></h5></div>
                         <div>{!! $announcement->pivot->content !!}</div>
                         @endforeach
                         <hr>
