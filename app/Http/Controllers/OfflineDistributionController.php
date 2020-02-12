@@ -56,7 +56,7 @@ class OfflineDistributionController extends Controller
         }
 
         $now = Carbon::now();
-        $two_weeks_ago = $now->subDays(14);
+        $two_weeks_ago = $now->copy()->subDays(14);
         $two_weeks_ago_timestamp = $two_weeks_ago->timestamp;
 
         // Show ongoing and past (last two weeks only) offline distribution
@@ -445,8 +445,7 @@ class OfflineDistributionController extends Controller
             'header' => json_encode($request->header()),
         ]);
 
-        $now = Carbon::now();
-        $two_weeks_ago = $now->subDays(14);
+        $two_weeks_ago = Carbon::now()->subDays(14);
         $two_weeks_ago_timestamp = $two_weeks_ago->timestamp;
 
         $present_offline_distributions = OfflineDistribution
