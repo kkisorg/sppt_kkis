@@ -56,7 +56,7 @@
             },
             licenseKey: '',
         }).then(editor => {
-            window.editor = editor;
+            window.header_editor = editor;
         }).catch(error => {console.error(error);});
         ClassicEditor.create(document.querySelector('#content'), {
             simpleUpload: {
@@ -109,7 +109,7 @@
             },
             licenseKey: '',
         }).then(editor => {
-            window.editor = editor;
+            window.content_editor = editor;
         }).catch(error => {console.error(error);});
         ClassicEditor.create(document.querySelector('#footer'), {
             simpleUpload: {
@@ -162,9 +162,37 @@
             },
             licenseKey: '',
         }).then(editor => {
-            window.editor = editor;
+            window.footer_editor = editor;
         }).catch(error => {console.error(error);});
     });
+
+    function validate(aForm) {
+        // Header must be filled
+        aData = header_editor.getData();
+        if (aData == '') {
+            alert('Header harus diisi.');
+            header_editor.editing.view.focus();
+            return false;
+        }
+
+        // Content must be filled
+        aData = content_editor.getData();
+        if (aData == '') {
+            alert('Isi harus diisi.');
+            content_editor.editing.view.focus();
+            return false;
+        }
+
+        // Footer must be filled
+        aData = footer_editor.getData();
+        if (aData == '') {
+            alert('Footer harus diisi.');
+            footer_editor.editing.view.focus();
+            return false;
+        }
+
+        return true;
+    }
 </script>
 @endsection
 
@@ -176,7 +204,7 @@
                 <div class="panel-heading">
                     <h3><b>Ubah Pengumuman Dalam Distribusi</b></h3>
                 </div>
-                <form action="/offline_distribution/update_content" role="form" method="POST" class="form-vertical">
+                <form action="/offline_distribution/update_content" role="form" method="POST" class="form-vertical" onsubmit="return validate(this);">
                     {{ csrf_field() }}
                     <input type="hidden" name="id" id="id" value="{{ $offline_distribution->id }}">
                     <div class="panel-body">

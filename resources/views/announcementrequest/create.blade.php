@@ -75,6 +75,33 @@
             useStrict: true,
         });
     });
+
+    function validate(aForm) {
+        // Content must be filled
+        aData = editor.getData();
+        if (aData == '') {
+            alert('Isi Pengumuman harus diisi.');
+            editor.editing.view.focus();
+            return false;
+        }
+
+        // Date must be present (not past)
+        var tomorrow = new Date();
+        tomorrow.setDate(new Date().getDate() + 1);
+        var dt = new Date($('#event-datetime').val());
+        if (dt < tomorrow) {
+            alert('Waktu kegiatan minimal 24 jam dari sekarang.');
+            $('#event-datetime').focus();
+            return false;
+        }
+
+        // At least one media must be ticked
+        if ($(':checkbox:checked').length == 0) {
+            alert('Minimum satu media harus dipilih.');
+            return false;
+        };
+        return true;
+    }
 </script>
 @endsection
 
@@ -86,7 +113,7 @@
                 <div class="panel-heading">
                     <strong>Form Pengumuman Baru</strong>
                 </div>
-                <form action="/announcement_request/insert" role="form" method="POST" class="form-vertical">
+                <form action="/announcement_request/insert" role="form" method="POST" class="form-vertical" onsubmit="return validate(this);">
                     {{ csrf_field() }}
                     <div class="panel-body">
                         <div class="row form-group center-block" >
