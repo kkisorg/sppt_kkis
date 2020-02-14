@@ -9,6 +9,11 @@
         padding: 0;
         margin: 0;
     }
+
+    a {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 </style>
 @endsection
 
@@ -67,7 +72,7 @@
 				},
 				licenseKey: '',
             }).then(editor => {
-				window.editor = editor;
+				window.content_editor = editor;
 		    }).catch(error => {console.error(error);});
         @foreach($media as $medium)
         ClassicEditor.create(
@@ -122,13 +127,20 @@
 				},
 				licenseKey: '',
             }).then(editor => {
-				window.editor = editor;
+				window.editor_{{ $medium->id }} = editor;
 		    }).catch(error => {console.error(error);});
+
+            $('#copy-{{ $medium->id }}').click(function() {
+                window['editor_{{ $medium->id }}'].setData(window['content_editor'].getData());
+                return false;
+            });
         @endforeach
         $('#eventdatetimepicker').datetimepicker({
             sideBySide: true,
             useStrict: true,
         });
+
+
     });
 
     function validate(aForm) {
@@ -232,7 +244,7 @@
                         @foreach($media as $medium)
                         <div class="row form-group center-block">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label class="checkbox" for="content-{{ $medium->id }}"><input type="checkbox" id="media-{{ $medium->id }}" name="media[]" value="{{ $medium->id }}" @if (in_array($medium->id, $announcement->media()->pluck('id')->toArray())) checked @endif>{{ $medium-> name }}</label>
+                                <label class="checkbox" for="content-{{ $medium->id }}"><input type="checkbox" id="media-{{ $medium->id }}" name="media[]" value="{{ $medium->id }}" @if (in_array($medium->id, $announcement->media()->pluck('id')->toArray())) checked @endif>{{ $medium-> name }}<a id="copy-{{ $medium->id }}" class="btn btn-default btn-xs" role="button">Salin Isi Pengumuman</a></label>
                                 <textarea name="content-{{ $medium->id }}" id="content-{{ $medium->id }}" class="form-control" rows="5">@if (array_key_exists($medium->id, $announcement->media_content)) {{ $announcement->media_content[$medium->id] }} @endif</textarea>
                             </div>
                         </div>
