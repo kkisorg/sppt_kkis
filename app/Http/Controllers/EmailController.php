@@ -265,7 +265,7 @@ class EmailController extends Controller
                             ->bcc($request_parameter['bcc'])
                             ->send(new InformNewAnnouncementRequest(
                                 json_decode($request_parameter['new_announcement_request_titles'], true),
-                                json_decode($request_parameter['revised_announcement_request_titles'], true),
+                                json_decode($request_parameter['revised_announcement_request_titles'], true)
                             ));
                         break;
                     default:
