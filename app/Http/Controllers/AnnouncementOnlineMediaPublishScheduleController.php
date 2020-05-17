@@ -18,6 +18,7 @@ use App\Media;
 use App\User;
 use App\UserActivityTracking;
 use App\Mail\PublishToOnlineMedia;
+use App\Mail\PublishToWebsite;
 
 class AnnouncementOnlineMediaPublishScheduleController extends Controller
 {
@@ -217,9 +218,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $request_parameter = array(
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
                             'announcement_online_media_publish_schedule' => $schedule->toJson(),
-                            'mention_media_name_in_subject' => false,
-                            'mention_app_name_in_subject' => false,
-                            'mention_app_name_in_body' => false,
                             'to' => array(env('WEBSITE_MAILBOX_EMAIL')),
                             'bcc' => array(config('mail.from.address'))
                         );
@@ -227,9 +225,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
 
                         Mail::to(env('WEBSITE_MAILBOX_EMAIL'))
                             ->bcc(config('mail.from.address'))
-                            ->send(new PublishToOnlineMedia(
-                                $schedule, false, false, false
-                            ));
+                            ->send(new PublishToWebsite($schedule));
                         break;
                     case 'facebook':
                         // Prepare content and attachment(s).
