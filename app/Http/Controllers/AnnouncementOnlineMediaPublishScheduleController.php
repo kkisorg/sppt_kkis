@@ -243,6 +243,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         // Reformat content.
                         $content = preg_replace('#<br\s*\/?>#', "\n", $content);
                         $content = preg_replace('#<\/p>#', "\n\n", $content);
+                        $content = htmlspecialchars_decode($content);
                         $content = strip_tags($content);
 
                         if (count($image_path_array) == 0) {
