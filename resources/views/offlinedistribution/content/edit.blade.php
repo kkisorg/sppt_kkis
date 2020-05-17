@@ -214,10 +214,14 @@
                         <div><h5><b>Media: </b>{{ $offline_distribution->media_name }}</h5></div>
                         <hr>
                         <div><h4><b>Daftar Pengumuman (Untuk Referensi): </b></h4></div>
-                        @foreach ($offline_distribution->announcement as $announcement)
-                        <div><h5><b>{{ $announcement->title }}</b></h5></div>
-                        <div>{!! $announcement->pivot->content !!}</div>
-                        @endforeach
+                        <ol>
+                            @foreach ($offline_distribution->announcement as $announcement)
+                            <li>
+                                <div><h5><b>{{ $announcement->title }}</b></h5></div>
+                                <div>{!! $announcement->pivot->content !!}</div>
+                            </li>
+                            @endforeach
+                        </ol>
                         <hr>
                         <div class="row form-group center-block">
                             <label for="header"> Header: </label>
