@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\DB;
 use App\Announcement;
 use App\AnnouncementOnlineMediaPublishSchedule;
 use App\AnnouncementRequest;
+use App\EmailSendSchedule;
 use App\Media;
 use App\OfflineDistribution;
+use App\User;
 use App\UserActivityTracking;
 use App\Http\Controllers\Traits\AnnouncementOfflineDistributionLinker;
 use App\Http\Controllers\Traits\AnnouncementOnlineMediaPublishScheduler;
@@ -611,5 +613,68 @@ class AnnouncementController extends Controller
             ->get();
 
         return view('announcement.public.view', ['present_announcements' => $present_announcements]);
+    }
+
+    /**
+     * Check whether there are any updates in the announcement approval center.
+     * If so, send an email to the administrators.
+     *
+     * @return void
+     */
+    public function __invoke()
+    {
+        $now = Carbon::now();
+        $thirty_minutes_ago = Carbon::now()->subMinutes(30);
+
+        // New announcement request.
+        $new_announcement_requests = DB::select('
+            select title
+            from announcement_request
+            where id not in (
+                select distinct announcement_request_id
+                from announcement
+            )
+            and create_timestamp between ? and ?
+            and event_timestamp > ?
+            order by event_timestamp
+        ', [$thirty_minutes_ago->timestamp, $now->timestamp, $now->timestamp]);
+        $new_announcement_request_titles = array();
+        foreach($new_announcement_requests as $request) {
+            array_push($new_announcement_request_titles, $request->title);
+        }
+
+        // Revised announcement request.
+        $revised_announcement_requests = DB::select('
+            select announcement.title
+            from announcement
+            where exists (
+                select *
+                from announcement_request
+                where announcement_request.id = announcement.announcement_request_id
+                and announcement_request.revision_no > announcement.revision_no
+                and create_timestamp between ? and ?
+            )
+            and event_timestamp > ?
+            order by event_timestamp
+        ', [$thirty_minutes_ago->timestamp, $now->timestamp, $now->timestamp]);
+        $revised_announcement_request_titles = array();
+        foreach($revised_announcement_requests as $request) {
+            array_push($revised_announcement_request_titles, $request->title);
+        }
+
+        if ((count($new_announcement_request_titles) > 0) || (count($revised_announcement_request_titles) > 0)) {
+            // Prepare parameter for email and create schedule accordingly.
+            $admin_email_array = User::where('is_admin', true)->pluck('email')->toArray();
+            $email_parameter = array(
+                'to' => $admin_email_array,
+                'new_announcement_request_titles' => json_encode($new_announcement_request_titles),
+                'revised_announcement_request_titles' => json_encode($revised_announcement_request_titles)
+            );
+            EmailSendSchedule::create([
+                'email_class' => 'InformNewAnnouncementRequest',
+                'request_parameter' => json_encode($email_parameter),
+                'send_timestamp' => Carbon::now()->timestamp
+            ]);
+        }
     }
 }
