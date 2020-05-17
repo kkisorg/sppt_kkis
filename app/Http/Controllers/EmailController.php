@@ -15,6 +15,7 @@ use App\User;
 use App\UserActivityTracking;
 
 use App\Mail\ActivateAccount;
+use App\Mail\InformNewAnnouncementRequest;
 use App\Mail\PasswordChanged;
 use App\Mail\ResetPassword;
 use App\Mail\ShareOfflineDistribution;
@@ -258,6 +259,14 @@ class EmailController extends Controller
                             ->bcc($request_parameter['bcc'])
                             ->send(new ShareOfflineDistribution($offline_distribution));
 
+                        break;
+                    case 'InformNewAnnouncementRequest':
+                        Mail::to($request_parameter['to'])
+                            ->bcc($request_parameter['bcc'])
+                            ->send(new InformNewAnnouncementRequest(
+                                json_decode($request_parameter['new_announcement_request_titles'], true),
+                                json_decode($request_parameter['revised_announcement_request_titles'], true),
+                            ));
                         break;
                     default:
                         throw new Exception('Unknown email class name.');
