@@ -230,7 +230,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                     case 'facebook':
                         // Prepare content and attachment(s).
                         $image_path_array = array();
-                        $content = $schedule->content;
+                        $content = $schedule->title."\n\n".$schedule->content;
                         // Collect attachment(s).
                         preg_match_all('/(<img src=")(.*?)(")/', $content, $tmp_image_path_array);
                         foreach ($tmp_image_path_array[2] as $image_path) {
