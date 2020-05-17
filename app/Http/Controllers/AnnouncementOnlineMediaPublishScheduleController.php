@@ -18,6 +18,7 @@ use App\Media;
 use App\User;
 use App\UserActivityTracking;
 use App\Mail\PublishToOnlineMedia;
+use App\Mail\PublishToWebsite;
 
 class AnnouncementOnlineMediaPublishScheduleController extends Controller
 {
@@ -217,9 +218,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $request_parameter = array(
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
                             'announcement_online_media_publish_schedule' => $schedule->toJson(),
-                            'mention_media_name_in_subject' => false,
-                            'mention_app_name_in_subject' => false,
-                            'mention_app_name_in_body' => false,
                             'to' => array(env('WEBSITE_MAILBOX_EMAIL')),
                             'bcc' => array(config('mail.from.address'))
                         );
@@ -227,14 +225,12 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
 
                         Mail::to(env('WEBSITE_MAILBOX_EMAIL'))
                             ->bcc(config('mail.from.address'))
-                            ->send(new PublishToOnlineMedia(
-                                $schedule, false, false, false
-                            ));
+                            ->send(new PublishToWebsite($schedule));
                         break;
                     case 'facebook':
                         // Prepare content and attachment(s).
                         $image_path_array = array();
-                        $content = $schedule->content;
+                        $content = $schedule->title."\n\n".$schedule->content;
                         // Collect attachment(s).
                         preg_match_all('/(<img src=")(.*?)(")/', $content, $tmp_image_path_array);
                         foreach ($tmp_image_path_array[2] as $image_path) {
@@ -247,6 +243,7 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         // Reformat content.
                         $content = preg_replace('#<br\s*\/?>#', "\n", $content);
                         $content = preg_replace('#<\/p>#', "\n\n", $content);
+                        $content = htmlspecialchars_decode($content);
                         $content = strip_tags($content);
 
                         if (count($image_path_array) == 0) {
@@ -302,9 +299,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $request_parameter = array(
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
                             'announcement_online_media_publish_schedule' => $schedule->toJson(),
-                            'mention_media_name_in_subject' => true,
-                            'mention_app_name_in_subject' => true,
-                            'mention_app_name_in_body' => true,
                             'to' => $admin_email_array,
                             'bcc' => array(config('mail.from.address'))
                         );
