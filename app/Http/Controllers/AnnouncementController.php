@@ -634,7 +634,7 @@ class AnnouncementController extends Controller
                 select distinct announcement_request_id
                 from announcement
             )
-            and create_timestamp between ? and ?
+            and update_timestamp between ? and ?
             and event_timestamp > ?
             order by event_timestamp
         ', [$thirty_minutes_ago->timestamp, $now->timestamp, $now->timestamp]);
@@ -652,7 +652,7 @@ class AnnouncementController extends Controller
                 from announcement_request
                 where announcement_request.id = announcement.announcement_request_id
                 and announcement_request.revision_no > announcement.revision_no
-                and create_timestamp between ? and ?
+                and update_timestamp between ? and ?
             )
             and event_timestamp > ?
             order by event_timestamp
