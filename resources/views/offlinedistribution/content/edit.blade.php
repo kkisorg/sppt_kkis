@@ -164,6 +164,18 @@
         }).then(editor => {
             window.footer_editor = editor;
         }).catch(error => {console.error(error);});
+
+        @foreach($offline_distribution->announcement as $announcement)
+        $('#copy-{{ $announcement->id }}').click(function() {
+            var original_content = window['content_editor'].getData();
+            // Append with title and then content.
+            var appended_title = $("#announcement_title_{{ $announcement->id }}").html();
+            var appended_content = $("#announcement_content_{{ $announcement->id }}").html();
+            var updated_content = original_content + '<br />' + appended_title + '<br />' + appended_content;
+            window['content_editor'].setData(updated_content);
+            return false;
+        });
+        @endforeach
     });
 
     function validate(aForm) {
@@ -214,10 +226,18 @@
                         <div><h5><b>Media: </b>{{ $offline_distribution->media_name }}</h5></div>
                         <hr>
                         <div><h4><b>Daftar Pengumuman (Untuk Referensi): </b></h4></div>
-                        @foreach ($offline_distribution->announcement as $announcement)
-                        <div><h5><b>{{ $announcement->title }}</b></h5></div>
-                        <div>{!! $announcement->pivot->content !!}</div>
-                        @endforeach
+                        <ol>
+                            @foreach ($offline_distribution->announcement as $announcement)
+                            <li>
+                                <div>
+                                    <h5 id="announcement_title_{{ $announcement->id }}"><b>{{ $announcement->title }}</b></h5>
+                                </div>
+                                <div id="announcement_content_{{ $announcement->id }}">{!! $announcement->pivot->content !!}</div>
+                                <a id="copy-{{ $announcement->id }}" class="btn btn-default btn-xs" role="button">Salin Pengumuman di atas ke Bagian Isi Distribusi Offline</a></label>
+
+                            </li>
+                            @endforeach
+                        </ol>
                         <hr>
                         <div class="row form-group center-block">
                             <label for="header"> Header: </label>
