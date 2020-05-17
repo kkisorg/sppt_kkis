@@ -298,9 +298,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $request_parameter = array(
                             'announcement_online_media_publish_schedule_id' => $schedule->id,
                             'announcement_online_media_publish_schedule' => $schedule->toJson(),
-                            'mention_media_name_in_subject' => true,
-                            'mention_app_name_in_subject' => true,
-                            'mention_app_name_in_body' => true,
                             'to' => $admin_email_array,
                             'bcc' => array(config('mail.from.address'))
                         );

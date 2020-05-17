@@ -21,27 +21,6 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
      */
     protected $publish_schedule;
 
-    /**
-     * The flag indicating whether or not to mention app name in the email's subject.
-     *
-     * @var bool
-     */
-    protected $mention_app_name_in_subject;
-
-    /**
-     * The flag indicating whether or not to mention media name in the email's subject.
-     *
-     * @var bool
-     */
-    protected $mention_media_name_in_subject;
-
-    /**
-     * The flag indicating whether or not to mention app name in the email's body.
-     *
-     * @var bool
-     */
-    protected $mention_app_name_in_body;
-
    /**
     * The array of image_path.
     *
@@ -54,15 +33,9 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(AnnouncementOnlineMediaPublishSchedule $publish_schedule,
-                                bool $mention_media_name_in_subject = true,
-                                bool $mention_app_name_in_subject = true,
-                                bool $mention_app_name_in_body = true)
+    public function __construct(AnnouncementOnlineMediaPublishSchedule $publish_schedule)
     {
         $this->publish_schedule = $publish_schedule;
-        $this->mention_app_name_in_subject = $mention_app_name_in_subject;
-        $this->mention_media_name_in_subject = $mention_media_name_in_subject;
-        $this->mention_app_name_in_body = $mention_app_name_in_body;
         $this->image_path_array = array();
 
     }
@@ -98,13 +71,8 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         $media_name = $this->publish_schedule->media->name;
 
         // Extract subject.
-        $subject = '';
-        if ($this->mention_app_name_in_subject) {
-            $subject .= '['.config('app.name').'] ';
-        }
-        if ($this->mention_media_name_in_subject) {
-            $subject .= '['.$media_name.'] ';
-        }
+        $subject = '['.config('app.name').'] ';
+        $subject .= '['.$media_name.'] ';
         $subject .= $this->publish_schedule->title;
 
         // Extract attachment (URL to attachments) and remove URL from content.
@@ -113,10 +81,7 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         $email = $this
             ->subject($subject)
             ->view('announcement.distribution_schedule.publish.default.email')
-            ->with([
-                'content' => $content,
-                'mention_app_name_in_body' => $this->mention_app_name_in_body
-            ]);
+            ->with(['content' => $content]);
 
         foreach ($this->image_path_array as $image_path) {
             $email->attach($image_path);
