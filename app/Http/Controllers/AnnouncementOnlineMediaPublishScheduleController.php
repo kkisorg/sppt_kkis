@@ -248,9 +248,6 @@ class AnnouncementOnlineMediaPublishScheduleController extends Controller
                         $content = preg_replace('#<br\s*\/?>#', "\n", $content);
                         $content = preg_replace('#<\/p>#', "\n\n", $content);
                         $content = strip_tags($content);
-                        if ($content == null) {
-                            $content = $schedule->title;
-                        }
 
                         if (count($image_path_array) == 0) {
                             $request_parameter = array('message' => $content);
