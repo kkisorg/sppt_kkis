@@ -70,10 +70,12 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
     {
         $media_name = $this->publish_schedule->media->name;
 
+        $title = $this->publish_schedule->title;
+
         // Extract subject.
         $subject = '['.config('app.name').'] ';
         $subject .= '['.$media_name.'] ';
-        $subject .= $this->publish_schedule->title;
+        $subject .= $title;
 
         // Extract attachment (URL to attachments) and remove URL from content.
         $content = $this->extract_and_remove_image_path($this->publish_schedule->content);
@@ -81,7 +83,11 @@ class PublishToOnlineMedia extends Mailable implements ShouldQueue
         $email = $this
             ->subject($subject)
             ->view('announcement.distribution_schedule.publish.default.email')
-            ->with(['content' => $content]);
+            ->with([
+                'media_name' => $media_name,
+                'title' => $title,
+                'content' => $content
+            ]);
 
         foreach ($this->image_path_array as $image_path) {
             $email->attach($image_path);
