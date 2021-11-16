@@ -10,7 +10,7 @@
         "facebook/graph-sdk": "^5.7",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.5",
-        "laravel/framework": "5.8.*",
+        "laravel/framework": "6.18.*",
         "laravel/tinker": "~1.0"
     },
     "require-dev": {
